@@ -14,7 +14,7 @@ interface CarProps {
 }
 
 const Car: React.FC<CarProps> = ({ position, lane, color, isWinner }) => {
-  // Determine which SVG to use based on the color
+  // 色に基づいてどちらのSVGを使うか決定する
   const carImage = color === "#2ecc71" ? GreenCarSvg : RedCarSvg;
 
   return (

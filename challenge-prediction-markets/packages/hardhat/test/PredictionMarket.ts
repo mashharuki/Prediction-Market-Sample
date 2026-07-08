@@ -3,7 +3,7 @@ import { network } from "hardhat";
 import type { PredictionMarket, PredictionMarket__factory } from "../types/ethers-contracts/index.js";
 
 describe("📈📉🏎️ Prediction Markets Challenge", function () {
-  // We define a fixture to reuse the same setup in every test.
+  // すべてのテストで同じセットアップを再利用するためにフィクスチャを定義する。
 
   let ethers: Awaited<ReturnType<typeof network.create>>["ethers"];
   let predictionMarket: PredictionMarket;
@@ -14,7 +14,7 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
   if (process.env.CONTRACT_ADDRESS) {
     contractArtifact = `contracts/download-${process.env.CONTRACT_ADDRESS}.sol:PredictionMarket`;
   } else {
-    // Use short name so hardhat-ethers returns PredictionMarket__factory (typed methods)
+    // 短い名前を使うことで、hardhat-ethersがPredictionMarket__factory(型付きメソッド)を返すようにする
     contractArtifact = "PredictionMarket";
   }
 
@@ -60,7 +60,7 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       const [owner, oracle] = await ethers.getSigners();
       const predictionMarketFactory = await getPredictionMarketFactory();
 
-      // Test case 1: initialYesProbability = 0
+      // テストケース1: initialYesProbability = 0
       await expect(
         predictionMarketFactory.deploy(
           owner.address,
@@ -73,7 +73,7 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
         ),
       ).to.be.revertedWithCustomError(predictionMarketFactory, "PredictionMarket__InvalidProbability");
 
-      // Test case 2: initialYesProbability = 100
+      // テストケース2: initialYesProbability = 100
       await expect(
         predictionMarketFactory.deploy(
           owner.address,
@@ -91,7 +91,7 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       const [owner, oracle] = await ethers.getSigners();
       const predictionMarketFactory = await getPredictionMarketFactory();
 
-      // Test case 1: percentageToLock = 0
+      // テストケース1: percentageToLock = 0
       await expect(
         predictionMarketFactory.deploy(
           owner.address,
@@ -104,7 +104,7 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
         ),
       ).to.be.revertedWithCustomError(predictionMarketFactory, "PredictionMarket__InvalidPercentageToLock");
 
-      // Test case 2: percentageToLock = 100
+      // テストケース2: percentageToLock = 100
       await expect(
         predictionMarketFactory.deploy(
           owner.address,
@@ -137,7 +137,7 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Verify all state variables are set correctly
+      // すべての状態変数が正しく設定されていることを検証する
       expect(await predictionMarket.i_oracle()).to.equal(oracle.address);
       expect(await predictionMarket.s_question()).to.equal(question);
       expect(await predictionMarket.i_initialTokenValue()).to.equal(initialTokenValue);
@@ -168,17 +168,17 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get token contracts
+      // トークンコントラクトを取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
       const noTokenAddress = await predictionMarket.i_noToken();
       const yesToken = await ethers.getContractAt("PredictionMarketToken", yesTokenAddress);
       const noToken = await ethers.getContractAt("PredictionMarketToken", noTokenAddress);
 
-      // Calculate expected values
+      // 期待値を計算する
       const PRECISION = BigInt(1e18); // 1e18 precision
       const initialTokenAmount = (initialLiquidity * PRECISION) / initialTokenValue; // 10 tokens
 
-      // Verify token amounts
+      // トークンの量を検証する
       expect(await yesToken.totalSupply()).to.equal(initialTokenAmount);
       expect(await noToken.totalSupply()).to.equal(initialTokenAmount);
     });
@@ -203,13 +203,13 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get token contracts
+      // トークンコントラクトを取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
       const noTokenAddress = await predictionMarket.i_noToken();
       const yesToken = await ethers.getContractAt("PredictionMarketToken", yesTokenAddress);
       const noToken = await ethers.getContractAt("PredictionMarketToken", noTokenAddress);
 
-      // Calculate expected values
+      // 期待値を計算する
       const PRECISION = BigInt(1e18); // 1e18 precision
       const initialTokenAmount = (initialLiquidity * PRECISION) / initialTokenValue; // 10 tokens
       const initialYesAmountLocked =
@@ -218,7 +218,7 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
         (initialTokenAmount * BigInt(100 - initialYesProbability) * BigInt(percentageToLock) * BigInt(2)) /
         BigInt(10000);
 
-      // Verify locked token transfers to deployer
+      // ロックされたトークンがデプロイヤーに送金されたことを検証する
       expect(await yesToken.balanceOf(owner.address)).to.equal(initialYesAmountLocked);
       expect(await noToken.balanceOf(owner.address)).to.equal(initialNoAmountLocked);
     });
@@ -241,16 +241,16 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       const initialEthCollateral = await predictionMarket.s_ethCollateral();
       const liquidityToAdd = ethers.parseEther("5");
       const expectedTokenAmount = (liquidityToAdd * BigInt(1e18)) / ethers.parseEther("1");
-      // Get initial token balances
+      // 初期トークン残高を取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
       const noTokenAddress = await predictionMarket.i_noToken();
       const yesToken = await ethers.getContractAt("PredictionMarketToken", yesTokenAddress);
       const noToken = await ethers.getContractAt("PredictionMarketToken", noTokenAddress);
       const initialYesTokenBalance = await yesToken.balanceOf(predictionMarket.getAddress());
       const initialNoTokenBalance = await noToken.balanceOf(predictionMarket.getAddress());
-      // Add liquidity
+      // 流動性を追加する
       await predictionMarket.connect(owner).addLiquidity({ value: liquidityToAdd });
-      // Verify state changes
+      // 状態の変化を検証する
       expect(await predictionMarket.s_ethCollateral()).to.equal(initialEthCollateral + liquidityToAdd);
       expect(await yesToken.balanceOf(predictionMarket.getAddress())).to.equal(
         initialYesTokenBalance + expectedTokenAmount,
@@ -274,10 +274,10 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Try to remove more ETH than we initially provided
+      // 最初に提供した量より多くのETHの削除を試みる
       const ethToRemove = ethers.parseEther("11"); // Try to remove 11 ETH when we only have 10 ETH worth of tokens
 
-      // Try to remove liquidity with more tokens than available
+      // 利用可能な量より多くのトークンで流動性の削除を試みる
       await expect(predictionMarket.connect(owner).removeLiquidity(ethToRemove)).to.be.revertedWithCustomError(
         predictionMarket,
         "PredictionMarket__InsufficientTokenReserve",
@@ -299,16 +299,16 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       const initialEthCollateral = await predictionMarket.s_ethCollateral();
       const ethToRemove = ethers.parseEther("5");
       const expectedTokenAmount = (ethToRemove * BigInt(1e18)) / ethers.parseEther("1");
-      // Get initial token balances
+      // 初期トークン残高を取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
       const noTokenAddress = await predictionMarket.i_noToken();
       const yesToken = await ethers.getContractAt("PredictionMarketToken", yesTokenAddress);
       const noToken = await ethers.getContractAt("PredictionMarketToken", noTokenAddress);
       const initialYesTokenBalance = await yesToken.balanceOf(predictionMarket.getAddress());
       const initialNoTokenBalance = await noToken.balanceOf(predictionMarket.getAddress());
-      // Remove liquidity
+      // 流動性を削除する
       await predictionMarket.connect(owner).removeLiquidity(ethToRemove);
-      // Verify state changes
+      // 状態の変化を検証する
       expect(await predictionMarket.s_ethCollateral()).to.equal(initialEthCollateral - ethToRemove);
       expect(await yesToken.balanceOf(predictionMarket.getAddress())).to.equal(
         initialYesTokenBalance - expectedTokenAmount,
@@ -332,20 +332,20 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Test LiquidityAdded event
+      // LiquidityAddedイベントをテストする
       const liquidityToAdd = ethers.parseEther("5");
       const expectedTokenAmount = (liquidityToAdd * BigInt(1e18)) / ethers.parseEther("1");
 
-      // Add liquidity and expect event
+      // 流動性を追加し、イベントを期待する
       await expect(predictionMarket.connect(owner).addLiquidity({ value: liquidityToAdd }))
         .to.emit(predictionMarket, "LiquidityAdded")
         .withArgs(owner.address, liquidityToAdd, expectedTokenAmount);
 
-      // Test LiquidityRemoved event
+      // LiquidityRemovedイベントをテストする
       const ethToRemove = ethers.parseEther("3");
       const expectedTokenAmountToRemove = (ethToRemove * BigInt(1e18)) / ethers.parseEther("1");
 
-      // Remove liquidity and expect event
+      // 流動性を削除し、イベントを期待する
       await expect(predictionMarket.connect(owner).removeLiquidity(ethToRemove))
         .to.emit(predictionMarket, "LiquidityRemoved")
         .withArgs(owner.address, ethToRemove, expectedTokenAmountToRemove);
@@ -354,10 +354,10 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
 
   describe("Checkpoint5", function () {
     it("Should revert when trying to add liquidity after prediction is reported", async function () {
-      // First report the prediction
+      // まず予測結果を報告する
       await predictionMarket.connect(oracle).report(0); // Report YES as winning option
 
-      // Try to add liquidity after prediction is reported
+      // 予測結果が報告された後に流動性の追加を試みる
       await expect(
         predictionMarket.connect(owner).addLiquidity({ value: ethers.parseEther("1") }),
       ).to.be.revertedWithCustomError(predictionMarket, "PredictionMarket__PredictionAlreadyReported");
@@ -377,10 +377,10 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // First report the prediction
+      // まず予測結果を報告する
       await predictionMarket.connect(oracle).report(0); // Report YES as winning option
 
-      // Try to remove liquidity after prediction is reported
+      // 予測結果が報告された後に流動性の削除を試みる
       await expect(
         predictionMarket.connect(owner).removeLiquidity(ethers.parseEther("1")),
       ).to.be.revertedWithCustomError(predictionMarket, "PredictionMarket__PredictionAlreadyReported");
@@ -400,10 +400,10 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // First report the prediction
+      // まず予測結果を報告する
       await predictionMarket.connect(oracle).report(0); // Report YES as winning option
 
-      // Try to report again
+      // 再度報告を試みる
       await expect(predictionMarket.connect(oracle).report(0)).to.be.revertedWithCustomError(
         predictionMarket,
         "PredictionMarket__PredictionAlreadyReported",
@@ -424,7 +424,7 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Try to report from non-oracle account
+      // オラクル以外のアカウントからの報告を試みる
       await expect(predictionMarket.connect(nonOracle).report(0)).to.be.revertedWithCustomError(
         predictionMarket,
         "PredictionMarket__OnlyOracleCanReport",
@@ -445,22 +445,22 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get token addresses before reporting
+      // 報告前にトークンアドレスを取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
 
-      // Initially isReported should be false
+      // 初期状態ではisReportedはfalseのはず
       expect(await predictionMarket.s_isReported()).to.equal(false);
 
-      // Report YES outcome
+      // YESの結果を報告する
       await predictionMarket.connect(oracle).report(0);
 
-      // Verify isReported is set to true
+      // isReportedがtrueに設定されていることを検証する
       expect(await predictionMarket.s_isReported()).to.equal(true);
 
-      // Verify winning token is set to YES token
+      // 勝ちトークンがYESトークンに設定されていることを検証する
       expect(await predictionMarket.s_winningToken()).to.equal(yesTokenAddress);
 
-      // Deploy a new instance for testing NO outcome
+      // NOの結果をテストするために新しいインスタンスをデプロイする
       const predictionMarket2 = await predictionMarketFactory.deploy(
         owner.address,
         oracle.address,
@@ -472,19 +472,19 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket2.waitForDeployment();
 
-      // Get token addresses for second instance
+      // 2つ目のインスタンスのトークンアドレスを取得する
       const noTokenAddress2 = await predictionMarket2.i_noToken();
 
-      // Initially isReported should be false
+      // 初期状態ではisReportedはfalseのはず
       expect(await predictionMarket2.s_isReported()).to.equal(false);
 
-      // Report NO outcome
+      // NOの結果を報告する
       await predictionMarket2.connect(oracle).report(1);
 
-      // Verify isReported is set to true
+      // isReportedがtrueに設定されていることを検証する
       expect(await predictionMarket2.s_isReported()).to.equal(true);
 
-      // Verify winning token is set to NO token
+      // 勝ちトークンがNOトークンに設定されていることを検証する
       expect(await predictionMarket2.s_winningToken()).to.equal(noTokenAddress2);
     });
 
@@ -502,15 +502,15 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get token addresses before reporting
+      // 報告前にトークンアドレスを取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
 
-      // Report YES outcome and expect event
+      // YESの結果を報告し、イベントを期待する
       await expect(predictionMarket.connect(oracle).report(0))
         .to.emit(predictionMarket, "MarketReported")
         .withArgs(oracle.address, 0, yesTokenAddress); // 0 represents YES outcome
 
-      // Deploy a new instance for testing NO outcome
+      // NOの結果をテストするために新しいインスタンスをデプロイする
       const predictionMarket2 = await predictionMarketFactory.deploy(
         owner.address,
         oracle.address,
@@ -522,10 +522,10 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket2.waitForDeployment();
 
-      // Get token addresses for second instance
+      // 2つ目のインスタンスのトークンアドレスを取得する
       const noTokenAddress2 = await predictionMarket2.i_noToken();
 
-      // Report NO outcome and expect event
+      // NOの結果を報告し、イベントを期待する
       await expect(predictionMarket2.connect(oracle).report(1))
         .to.emit(predictionMarket2, "MarketReported")
         .withArgs(oracle.address, 1, noTokenAddress2); // 1 represents NO outcome
@@ -547,7 +547,7 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Try to resolve before reporting
+      // 報告前に解決を試みる
       await expect(predictionMarket.connect(owner).resolveMarketAndWithdraw()).to.be.revertedWithCustomError(
         predictionMarket,
         "PredictionMarket__PredictionNotReported",
@@ -568,53 +568,53 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get initial balances
+      // 初期残高を取得する
       const initialOwnerBalance = await ethers.provider.getBalance(owner.address);
       const initialContractBalance = await ethers.provider.getBalance(predictionMarket.getAddress());
 
-      // Report the prediction
+      // 予測結果を報告する
       await predictionMarket.connect(oracle).report(0); // Report YES as winning option
 
-      // Get winning token contract and initial values
+      // 勝ちトークンのコントラクトと初期値を取得する
       const winningTokenAddress = await predictionMarket.s_winningToken();
       const winningToken = await ethers.getContractAt("PredictionMarketToken", winningTokenAddress);
       const initialWinningTokens = await winningToken.balanceOf(predictionMarket.getAddress());
       const initialLpTradingRevenue = await predictionMarket.s_lpTradingRevenue();
 
-      // Calculate expected amounts before resolving
+      // 解決前に期待される量を計算する
       const expectedEthAmount = (initialWinningTokens * ethers.parseEther("1")) / BigInt(1e18);
       const expectedTotalEthToSend = expectedEthAmount + initialLpTradingRevenue;
 
-      // Try to resolve from non-owner account (should fail)
+      // オーナー以外のアカウントからの解決を試みる(失敗するはず)
       await expect(predictionMarket.connect(nonOwner).resolveMarketAndWithdraw()).to.be.revertedWithCustomError(
         predictionMarket,
         "OwnableUnauthorizedAccount",
       );
 
-      // Resolve market
+      // マーケットを解決する
       const tx = await predictionMarket.connect(owner).resolveMarketAndWithdraw();
       const receipt = await tx.wait();
 
-      // Get final balances
+      // 最終残高を取得する
       const finalOwnerBalance = await ethers.provider.getBalance(owner.address);
       const finalContractBalance = await ethers.provider.getBalance(predictionMarket.getAddress());
       const finalWinningTokens = await winningToken.balanceOf(predictionMarket.getAddress());
 
-      // Verify state changes
+      // 状態の変化を検証する
       const expectedWinningTokens = BigInt(0);
       expect(finalWinningTokens).to.equal(expectedWinningTokens); // All winning tokens should be burned
 
-      // Account for gas costs in balance calculations
+      // 残高計算でガス代を考慮する
       const gasUsed = receipt?.gasUsed || BigInt(0);
       const gasPrice = tx.gasPrice || BigInt(0);
       const gasCost = gasUsed * gasPrice;
       const actualEthReceived = finalOwnerBalance - initialOwnerBalance + gasCost;
 
-      // Verify the exact amount was sent
+      // 正確な金額が送金されたことを検証する
       expect(actualEthReceived).to.equal(expectedTotalEthToSend);
       expect(finalContractBalance).to.equal(initialContractBalance - expectedTotalEthToSend);
 
-      // Verify event emission
+      // イベントの発行を検証する
       const marketResolvedEvent = receipt?.logs.find(log => {
         try {
           return predictionMarket.interface.parseLog({ topics: log.topics, data: log.data })?.name === "MarketResolved";
@@ -640,40 +640,40 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get initial balances
+      // 初期残高を取得する
       const initialOwnerBalance = await ethers.provider.getBalance(owner.address);
       const initialContractBalance = await ethers.provider.getBalance(predictionMarket.getAddress());
       const initialLpTradingRevenue = await predictionMarket.s_lpTradingRevenue();
 
-      // Report the prediction
+      // 予測結果を報告する
       await predictionMarket.connect(oracle).report(0); // Report YES as winning option
 
-      // Get winning token contract and balance
+      // 勝ちトークンのコントラクトと残高を取得する
       const winningTokenAddress = await predictionMarket.s_winningToken();
       const winningToken = await ethers.getContractAt("PredictionMarketToken", winningTokenAddress);
       const contractWinningTokens = await winningToken.balanceOf(predictionMarket.getAddress());
 
-      // Calculate expected ETH amount from winning tokens
+      // 勝ちトークンから期待されるETH量を計算する
       const ethFromWinningTokens = (contractWinningTokens * ethers.parseEther("1")) / BigInt(1e18);
 
-      // Calculate expected total ETH to send
+      // 送金されるはずの合計ETHを計算する
       const expectedTotalEthToSend = ethFromWinningTokens + initialLpTradingRevenue;
 
-      // Resolve market and get transaction
+      // マーケットを解決し、トランザクションを取得する
       const tx = await predictionMarket.connect(owner).resolveMarketAndWithdraw();
       const receipt = await tx.wait();
 
-      // Get final balances
+      // 最終残高を取得する
       const finalOwnerBalance = await ethers.provider.getBalance(owner.address);
       const finalContractBalance = await ethers.provider.getBalance(predictionMarket.getAddress());
 
-      // Calculate actual ETH sent (accounting for gas costs)
+      // 実際に送金されたETHを計算する(ガス代を考慮)
       const gasUsed = receipt?.gasUsed || BigInt(0);
       const gasPrice = tx.gasPrice || BigInt(0);
       const gasCost = gasUsed * gasPrice;
       const actualEthReceived = finalOwnerBalance - initialOwnerBalance + gasCost;
 
-      // Verify the exact amount was sent
+      // 正確な金額が送金されたことを検証する
       expect(actualEthReceived).to.equal(expectedTotalEthToSend);
       expect(finalContractBalance).to.equal(initialContractBalance - expectedTotalEthToSend);
     });
@@ -694,21 +694,21 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get token contracts
+      // トークンコントラクトを取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
       const noTokenAddress = await predictionMarket.i_noToken();
       const yesToken = await ethers.getContractAt("PredictionMarketToken", yesTokenAddress);
       const noToken = await ethers.getContractAt("PredictionMarketToken", noTokenAddress);
 
-      // Calculate expected values
+      // 期待値を計算する
       const PRECISION = BigInt(1e18);
       const initialTokenAmount = (ethers.parseEther("10") * PRECISION) / ethers.parseEther("1");
       const tradingAmount = initialTokenAmount / BigInt(10); // Buy 10% of total supply
 
-      // Get buy price for YES tokens
+      // YESトークンの購入価格を取得する
       const buyPrice = await predictionMarket.getBuyPriceInEth(0, tradingAmount);
 
-      // Verify price calculation
+      // 価格計算を検証する
       const currentTokenSoldBefore = initialTokenAmount - (await yesToken.balanceOf(predictionMarket.getAddress()));
       const currentOtherTokenSold = initialTokenAmount - (await noToken.balanceOf(predictionMarket.getAddress()));
       const totalTokensSoldBefore = currentTokenSoldBefore + currentOtherTokenSold;
@@ -739,21 +739,21 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get token contracts
+      // トークンコントラクトを取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
       const noTokenAddress = await predictionMarket.i_noToken();
       const yesToken = await ethers.getContractAt("PredictionMarketToken", yesTokenAddress);
       const noToken = await ethers.getContractAt("PredictionMarketToken", noTokenAddress);
 
-      // Calculate expected values
+      // 期待値を計算する
       const PRECISION = BigInt(1e18);
       const initialTokenAmount = (ethers.parseEther("10") * PRECISION) / ethers.parseEther("1");
       const tradingAmount = initialTokenAmount / BigInt(10); // Sell 10% of total supply
 
-      // Get sell price for YES tokens
+      // YESトークンの売却価格を取得する
       const sellPrice = await predictionMarket.getSellPriceInEth(0, tradingAmount);
 
-      // Verify price calculation
+      // 価格計算を検証する
       const currentTokenSoldBefore = initialTokenAmount - (await yesToken.balanceOf(predictionMarket.getAddress()));
       const currentOtherTokenSold = initialTokenAmount - (await noToken.balanceOf(predictionMarket.getAddress()));
       const totalTokensSoldBefore = currentTokenSoldBefore + currentOtherTokenSold;
@@ -784,11 +784,11 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get token contract
+      // トークンコントラクトを取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
       const yesToken = await ethers.getContractAt("PredictionMarketToken", yesTokenAddress);
 
-      // Try to buy more tokens than available in reserve
+      // リザーブにある量より多くのトークンの購入を試みる
       const reserveAmount = await yesToken.balanceOf(predictionMarket.getAddress());
       const tooManyTokens = reserveAmount + BigInt(1);
 
@@ -812,27 +812,27 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get token contracts
+      // トークンコントラクトを取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
       const noTokenAddress = await predictionMarket.i_noToken();
       const yesToken = await ethers.getContractAt("PredictionMarketToken", yesTokenAddress);
       const noToken = await ethers.getContractAt("PredictionMarketToken", noTokenAddress);
 
-      // Calculate expected values
+      // 期待値を計算する
       const PRECISION = BigInt(1e18);
       const initialTokenAmount = (ethers.parseEther("10") * PRECISION) / ethers.parseEther("1");
 
-      // Test different scenarios
+      // 様々なシナリオをテストする
       const scenarios = [
         { liquidityToAdd: ethers.parseEther("10"), expectedProbability: PRECISION / BigInt(2) }, // 50% YES (initial state)
         { liquidityToAdd: ethers.parseEther("20"), expectedProbability: PRECISION / BigInt(2) }, // Still 50% YES
       ];
 
       for (const scenario of scenarios) {
-        // Add liquidity to create token balances
+        // トークン残高を作るために流動性を追加する
         await predictionMarket.connect(owner).addLiquidity({ value: scenario.liquidityToAdd });
 
-        // Calculate probability
+        // 確率を計算する
         const currentTokenSold = initialTokenAmount - (await yesToken.balanceOf(predictionMarket.getAddress()));
         const totalTokensSold =
           initialTokenAmount -
@@ -858,42 +858,42 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get token contracts
+      // トークンコントラクトを取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
       const noTokenAddress = await predictionMarket.i_noToken();
       const yesToken = await ethers.getContractAt("PredictionMarketToken", yesTokenAddress);
       const noToken = await ethers.getContractAt("PredictionMarketToken", noTokenAddress);
 
-      // Get initial reserves
+      // 初期リザーブを取得する
       const initialYesReserve = await yesToken.balanceOf(predictionMarket.getAddress());
       const initialNoReserve = await noToken.balanceOf(predictionMarket.getAddress());
 
-      // Test reserves through price calculation for YES outcome
+      // YESの結果の価格計算を通じてリザーブをテストする
       const smallAmount = BigInt(1e15); // Small amount to minimize price impact
       const yesPrice = await predictionMarket.getBuyPriceInEth(0, smallAmount);
       expect(yesPrice).to.be.gt(0); // Price should be calculated correctly
 
-      // Test reserves through price calculation for NO outcome
+      // NOの結果の価格計算を通じてリザーブをテストする
       const noPrice = await predictionMarket.getBuyPriceInEth(1, smallAmount);
       expect(noPrice).to.be.gt(0); // Price should be calculated correctly
 
-      // Add some liquidity to change reserves
+      // リザーブを変化させるために流動性を追加する
       await predictionMarket.connect(owner).addLiquidity({ value: ethers.parseEther("5") });
 
-      // Get new reserves
+      // 新しいリザーブを取得する
       const newYesReserve = await yesToken.balanceOf(predictionMarket.getAddress());
       const newNoReserve = await noToken.balanceOf(predictionMarket.getAddress());
 
-      // Verify reserves increased equally
+      // リザーブが均等に増加したことを検証する
       expect(newYesReserve).to.be.gt(initialYesReserve);
       expect(newNoReserve).to.be.gt(initialNoReserve);
       expect(newYesReserve).to.equal(newNoReserve);
 
-      // Test reserves again through price calculation
+      // 価格計算を通じて再度リザーブをテストする
       const yesPriceAfter = await predictionMarket.getBuyPriceInEth(0, smallAmount);
       const noPriceAfter = await predictionMarket.getBuyPriceInEth(1, smallAmount);
 
-      // Prices should still be calculated correctly with new reserves
+      // 新しいリザーブでも価格が正しく計算されているはず
       expect(yesPriceAfter).to.be.gt(0);
       expect(noPriceAfter).to.be.gt(0);
     });
@@ -912,31 +912,31 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Calculate expected values
+      // 期待値を計算する
       const PRECISION = BigInt(1e18);
       const initialTokenAmount = (ethers.parseEther("10") * PRECISION) / ethers.parseEther("1");
 
-      // Test different scenarios for probability calculation
+      // 確率計算の様々なシナリオをテストする
       const scenarios = [
-        // Very small amount of tokens sold (almost all in reserve)
+        // 売却されたトークンがごく少量(ほぼ全てがリザーブにある状態)
         {
           yesTokensSold: BigInt(1),
           totalTokensSold: BigInt(2),
           expectedProbability: PRECISION / BigInt(2), // 50%
         },
-        // Almost all tokens sold (very small reserve)
+        // ほぼ全てのトークンが売却された状態(リザーブが極めて少ない)
         {
           yesTokensSold: initialTokenAmount - BigInt(1),
           totalTokensSold: initialTokenAmount * BigInt(2) - BigInt(2),
           expectedProbability: PRECISION / BigInt(2), // 50%
         },
-        // Uneven distribution (more YES tokens sold)
+        // 偏った分布(YESトークンがより多く売却されている)
         {
           yesTokensSold: initialTokenAmount / BigInt(2),
           totalTokensSold: initialTokenAmount,
           expectedProbability: PRECISION / BigInt(2), // 50%
         },
-        // Uneven distribution (more NO tokens sold)
+        // 偏った分布(NOトークンがより多く売却されている)
         {
           yesTokensSold: initialTokenAmount / BigInt(4),
           totalTokensSold: initialTokenAmount,
@@ -945,13 +945,13 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       ];
 
       for (const scenario of scenarios) {
-        // Calculate probability using the contract's formula
+        // コントラクトの計算式を使って確率を計算する
         const probability = (scenario.yesTokensSold * PRECISION) / scenario.totalTokensSold;
 
-        // Verify the probability calculation
+        // 確率計算を検証する
         expect(probability).to.equal(scenario.expectedProbability);
 
-        // Verify that the probability is within valid range (0 to 1)
+        // 確率が有効な範囲(0から1)内にあることを検証する
         expect(probability).to.be.gte(BigInt(0));
         expect(probability).to.be.lte(PRECISION);
       }
@@ -973,7 +973,7 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Try to buy tokens with zero amount
+      // 量が0でトークンの購入を試みる
       await expect(
         predictionMarket.connect(owner).buyTokensWithETH(0, 0, { value: ethers.parseEther("1") }),
       ).to.be.revertedWithCustomError(predictionMarket, "PredictionMarket__AmountMustBeGreaterThanZero");
@@ -993,7 +993,7 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Try to sell tokens with zero amount
+      // 量が0でトークンの売却を試みる
       await expect(predictionMarket.connect(owner).sellTokensForEth(0, 0)).to.be.revertedWithCustomError(
         predictionMarket,
         "PredictionMarket__AmountMustBeGreaterThanZero",
@@ -1014,15 +1014,15 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get token contract
+      // トークンコントラクトを取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
       const yesToken = await ethers.getContractAt("PredictionMarketToken", yesTokenAddress);
 
-      // Calculate amount to buy
+      // 購入する量を計算する
       const amountToBuy = (await yesToken.balanceOf(predictionMarket.getAddress())) / BigInt(10);
       const requiredEth = await predictionMarket.getBuyPriceInEth(0, amountToBuy);
 
-      // Try to buy with incorrect ETH amount
+      // 誤ったETH量で購入を試みる
       await expect(
         predictionMarket.connect(buyer).buyTokensWithETH(0, amountToBuy, { value: requiredEth + BigInt(1) }),
       ).to.be.revertedWithCustomError(predictionMarket, "PredictionMarket__MustSendExactETHAmount");
@@ -1042,26 +1042,26 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get token contract
+      // トークンコントラクトを取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
       const yesToken = await ethers.getContractAt("PredictionMarketToken", yesTokenAddress);
 
-      // Calculate amount to buy
+      // 購入する量を計算する
       const amountToBuy = (await yesToken.balanceOf(predictionMarket.getAddress())) / BigInt(10);
       const requiredEth = await predictionMarket.getBuyPriceInEth(0, amountToBuy);
 
-      // Get initial balances
+      // 初期残高を取得する
       const initialBuyerBalance = await yesToken.balanceOf(buyer.address);
       const initialContractBalance = await ethers.provider.getBalance(predictionMarket.getAddress());
 
-      // Buy tokens
+      // トークンを購入する
       await predictionMarket.connect(buyer).buyTokensWithETH(0, amountToBuy, { value: requiredEth });
 
-      // Get final balances
+      // 最終残高を取得する
       const finalBuyerBalance = await yesToken.balanceOf(buyer.address);
       const finalContractBalance = await ethers.provider.getBalance(predictionMarket.getAddress());
 
-      // Verify token transfer
+      // トークンの送金を検証する
       expect(finalBuyerBalance).to.equal(initialBuyerBalance + amountToBuy);
       expect(finalContractBalance).to.equal(initialContractBalance + requiredEth);
     });
@@ -1080,42 +1080,42 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get token contract
+      // トークンコントラクトを取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
       const yesToken = await ethers.getContractAt("PredictionMarketToken", yesTokenAddress);
 
-      // First buy some tokens
+      // まずトークンを購入する
       const amountToBuy = (await yesToken.balanceOf(predictionMarket.getAddress())) / BigInt(10);
       const requiredEth = await predictionMarket.getBuyPriceInEth(0, amountToBuy);
       await predictionMarket.connect(seller).buyTokensWithETH(0, amountToBuy, { value: requiredEth });
 
-      // Approve tokens for selling
+      // 売却のためにトークンを承認する
       await yesToken.connect(seller).approve(predictionMarket.getAddress(), amountToBuy);
 
-      // Get initial balances
+      // 初期残高を取得する
       const initialSellerBalance = await ethers.provider.getBalance(seller.address);
       const initialContractBalance = await ethers.provider.getBalance(predictionMarket.getAddress());
       const initialSellerTokens = await yesToken.balanceOf(seller.address);
 
-      // Calculate ETH to receive
+      // 受け取るETHを計算する
       const ethToReceive = await predictionMarket.getSellPriceInEth(0, amountToBuy);
 
-      // Sell tokens
+      // トークンを売却する
       const tx = await predictionMarket.connect(seller).sellTokensForEth(0, amountToBuy);
       const receipt = await tx.wait();
 
-      // Get final balances
+      // 最終残高を取得する
       const finalSellerBalance = await ethers.provider.getBalance(seller.address);
       const finalContractBalance = await ethers.provider.getBalance(predictionMarket.getAddress());
       const finalSellerTokens = await yesToken.balanceOf(seller.address);
 
-      // Calculate actual ETH received (accounting for gas costs)
+      // 実際に受け取ったETHを計算する(ガス代を考慮)
       const gasUsed = receipt?.gasUsed || BigInt(0);
       const gasPrice = tx.gasPrice || BigInt(0);
       const gasCost = gasUsed * gasPrice;
       const actualEthReceived = finalSellerBalance - initialSellerBalance + gasCost;
 
-      // Verify token transfer and ETH received
+      // トークンの送金と受け取ったETHを検証する
       expect(finalSellerTokens).to.equal(initialSellerTokens - amountToBuy);
       expect(actualEthReceived).to.equal(ethToReceive);
       expect(finalContractBalance).to.equal(initialContractBalance - ethToReceive);
@@ -1135,19 +1135,19 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get token contract
+      // トークンコントラクトを取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
       const yesToken = await ethers.getContractAt("PredictionMarketToken", yesTokenAddress);
 
-      // First buy some tokens
+      // まずトークンを購入する
       const amountToBuy = (await yesToken.balanceOf(predictionMarket.getAddress())) / BigInt(10);
       const requiredEth = await predictionMarket.getBuyPriceInEth(0, amountToBuy);
       await predictionMarket.connect(seller).buyTokensWithETH(0, amountToBuy, { value: requiredEth });
 
-      // Approve tokens for selling
+      // 売却のためにトークンを承認する
       await yesToken.connect(seller).approve(predictionMarket.getAddress(), amountToBuy);
 
-      // Try to sell more tokens than owned
+      // 保有量より多くのトークンの売却を試みる
       const tooManyTokens = amountToBuy + BigInt(1);
       await expect(predictionMarket.connect(seller).sellTokensForEth(0, tooManyTokens)).to.be.revertedWithCustomError(
         predictionMarket,
@@ -1169,16 +1169,16 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get token contract
+      // トークンコントラクトを取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
       const yesToken = await ethers.getContractAt("PredictionMarketToken", yesTokenAddress);
 
-      // First buy some tokens
+      // まずトークンを購入する
       const amountToBuy = (await yesToken.balanceOf(predictionMarket.getAddress())) / BigInt(10);
       const requiredEth = await predictionMarket.getBuyPriceInEth(0, amountToBuy);
       await predictionMarket.connect(seller).buyTokensWithETH(0, amountToBuy, { value: requiredEth });
 
-      // Try to sell tokens without approval
+      // 承認なしでトークンの売却を試みる
       await expect(predictionMarket.connect(seller).sellTokensForEth(0, amountToBuy)).to.be.revertedWithCustomError(
         predictionMarket,
         "PredictionMarket__InsufficientAllowance",
@@ -1199,26 +1199,26 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get token contract
+      // トークンコントラクトを取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
       const yesToken = await ethers.getContractAt("PredictionMarketToken", yesTokenAddress);
 
-      // Calculate amount to buy
+      // 購入する量を計算する
       const amountToBuy = (await yesToken.balanceOf(predictionMarket.getAddress())) / BigInt(10);
       const requiredEth = await predictionMarket.getBuyPriceInEth(0, amountToBuy);
 
-      // Buy tokens and expect event
+      // トークンを購入し、イベントを期待する
       await expect(predictionMarket.connect(trader).buyTokensWithETH(0, amountToBuy, { value: requiredEth }))
         .to.emit(predictionMarket, "TokensPurchased")
         .withArgs(trader.address, 0, amountToBuy, requiredEth);
 
-      // Approve tokens for selling
+      // 売却のためにトークンを承認する
       await yesToken.connect(trader).approve(predictionMarket.getAddress(), amountToBuy);
 
-      // Calculate ETH to receive
+      // 受け取るETHを計算する
       const ethToReceive = await predictionMarket.getSellPriceInEth(0, amountToBuy);
 
-      // Sell tokens and expect event
+      // トークンを売却し、イベントを期待する
       await expect(predictionMarket.connect(trader).sellTokensForEth(0, amountToBuy))
         .to.emit(predictionMarket, "TokensSold")
         .withArgs(trader.address, 0, amountToBuy, ethToReceive);
@@ -1238,18 +1238,18 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get token contract
+      // トークンコントラクトを取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
       const yesToken = await ethers.getContractAt("PredictionMarketToken", yesTokenAddress);
 
-      // Calculate amount to buy
+      // 購入する量を計算する
       const amountToBuy = (await yesToken.balanceOf(predictionMarket.getAddress())) / BigInt(10);
       const requiredEth = await predictionMarket.getBuyPriceInEth(0, amountToBuy);
 
-      // Report the prediction
+      // 予測結果を報告する
       await predictionMarket.connect(oracle).report(0);
 
-      // Try to buy tokens after prediction is reported
+      // 予測結果が報告された後にトークンの購入を試みる
       await expect(
         predictionMarket.connect(buyer).buyTokensWithETH(0, amountToBuy, { value: requiredEth }),
       ).to.be.revertedWithCustomError(predictionMarket, "PredictionMarket__PredictionAlreadyReported");
@@ -1269,22 +1269,22 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get token contract
+      // トークンコントラクトを取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
       const yesToken = await ethers.getContractAt("PredictionMarketToken", yesTokenAddress);
 
-      // First buy some tokens
+      // まずトークンを購入する
       const amountToBuy = (await yesToken.balanceOf(predictionMarket.getAddress())) / BigInt(10);
       const requiredEth = await predictionMarket.getBuyPriceInEth(0, amountToBuy);
       await predictionMarket.connect(seller).buyTokensWithETH(0, amountToBuy, { value: requiredEth });
 
-      // Approve tokens for selling
+      // 売却のためにトークンを承認する
       await yesToken.connect(seller).approve(predictionMarket.getAddress(), amountToBuy);
 
-      // Report the prediction
+      // 予測結果を報告する
       await predictionMarket.connect(oracle).report(0);
 
-      // Try to sell tokens after prediction is reported
+      // 予測結果が報告された後にトークンの売却を試みる
       await expect(predictionMarket.connect(seller).sellTokensForEth(0, amountToBuy)).to.be.revertedWithCustomError(
         predictionMarket,
         "PredictionMarket__PredictionAlreadyReported",
@@ -1305,18 +1305,18 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get token contract
+      // トークンコントラクトを取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
       const yesToken = await ethers.getContractAt("PredictionMarketToken", yesTokenAddress);
       const amountToBuy = (await yesToken.balanceOf(predictionMarket.getAddress())) / BigInt(10);
       const requiredEth = await predictionMarket.getBuyPriceInEth(0, amountToBuy);
 
-      // Owner tries to buy tokens
+      // オーナーがトークンの購入を試みる
       await expect(
         predictionMarket.connect(owner).buyTokensWithETH(0, amountToBuy, { value: requiredEth }),
       ).to.be.revertedWithCustomError(predictionMarket, "PredictionMarket__OwnerCannotCall");
 
-      // Owner tries to sell tokens (even if owner doesn't have tokens, should revert on owner check)
+      // オーナーがトークンの売却を試みる(オーナーがトークンを持っていなくても、オーナーチェックでrevertするはず)
       await expect(predictionMarket.connect(owner).sellTokensForEth(0, amountToBuy)).to.be.revertedWithCustomError(
         predictionMarket,
         "PredictionMarket__OwnerCannotCall",
@@ -1339,7 +1339,7 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Try to redeem before prediction is reported
+      // 予測結果が報告される前に償還を試みる
       await expect(
         predictionMarket.connect(redeemer).redeemWinningTokens(ethers.parseEther("1")),
       ).to.be.revertedWithCustomError(predictionMarket, "PredictionMarket__PredictionNotReported");
@@ -1359,10 +1359,10 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Report the prediction
+      // 予測結果を報告する
       await predictionMarket.connect(oracle).report(0); // Report YES as winning outcome
 
-      // Try to redeem more tokens than owned
+      // 保有量より多くのトークンの償還を試みる
       await expect(
         predictionMarket.connect(redeemer).redeemWinningTokens(ethers.parseEther("1")),
       ).to.be.revertedWithCustomError(predictionMarket, "PredictionMarket__InsufficientWinningTokens");
@@ -1382,10 +1382,10 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Report the prediction
+      // 予測結果を報告する
       await predictionMarket.connect(oracle).report(0);
 
-      // Try to redeem zero tokens
+      // 0トークンの償還を試みる
       await expect(predictionMarket.connect(redeemer).redeemWinningTokens(0)).to.be.revertedWithCustomError(
         predictionMarket,
         "PredictionMarket__AmountMustBeGreaterThanZero",
@@ -1406,42 +1406,42 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get token contract
+      // トークンコントラクトを取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
       const yesToken = await ethers.getContractAt("PredictionMarketToken", yesTokenAddress);
 
-      // First buy some YES tokens
+      // まずYESトークンを購入する
       const amountToBuy = (await yesToken.balanceOf(predictionMarket.getAddress())) / BigInt(10);
       const requiredEth = await predictionMarket.getBuyPriceInEth(0, amountToBuy);
       await predictionMarket.connect(redeemer).buyTokensWithETH(0, amountToBuy, { value: requiredEth });
 
-      // Report YES as winning outcome
+      // YESを勝ちの結果として報告する
       await predictionMarket.connect(oracle).report(0);
 
-      // Get initial balances
+      // 初期残高を取得する
       const initialRedeemerBalance = await ethers.provider.getBalance(redeemer.address);
       const initialContractBalance = await ethers.provider.getBalance(predictionMarket.getAddress());
       const initialRedeemerTokens = await yesToken.balanceOf(redeemer.address);
 
-      // Calculate expected ETH to receive
+      // 受け取るはずのETHを計算する
       const expectedEthToReceive = (amountToBuy * ethers.parseEther("1")) / BigInt(1e18);
 
-      // Redeem tokens
+      // トークンを償還する
       const tx = await predictionMarket.connect(redeemer).redeemWinningTokens(amountToBuy);
       const receipt = await tx.wait();
 
-      // Get final balances
+      // 最終残高を取得する
       const finalRedeemerBalance = await ethers.provider.getBalance(redeemer.address);
       const finalContractBalance = await ethers.provider.getBalance(predictionMarket.getAddress());
       const finalRedeemerTokens = await yesToken.balanceOf(redeemer.address);
 
-      // Calculate actual ETH received (accounting for gas costs)
+      // 実際に受け取ったETHを計算する(ガス代を考慮)
       const gasUsed = receipt?.gasUsed || BigInt(0);
       const gasPrice = tx.gasPrice || BigInt(0);
       const gasCost = gasUsed * gasPrice;
       const actualEthReceived = finalRedeemerBalance - initialRedeemerBalance + gasCost;
 
-      // Verify token burning and ETH transfer
+      // トークンのバーンとETHの送金を検証する
       expect(finalRedeemerTokens).to.equal(initialRedeemerTokens - amountToBuy);
       expect(actualEthReceived).to.equal(expectedEthToReceive);
       expect(finalContractBalance).to.equal(initialContractBalance - expectedEthToReceive);
@@ -1461,22 +1461,22 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Get token contract
+      // トークンコントラクトを取得する
       const yesTokenAddress = await predictionMarket.i_yesToken();
       const yesToken = await ethers.getContractAt("PredictionMarketToken", yesTokenAddress);
 
-      // First buy some YES tokens
+      // まずYESトークンを購入する
       const amountToBuy = (await yesToken.balanceOf(predictionMarket.getAddress())) / BigInt(10);
       const requiredEth = await predictionMarket.getBuyPriceInEth(0, amountToBuy);
       await predictionMarket.connect(redeemer).buyTokensWithETH(0, amountToBuy, { value: requiredEth });
 
-      // Report YES as winning outcome
+      // YESを勝ちの結果として報告する
       await predictionMarket.connect(oracle).report(0);
 
-      // Calculate expected ETH to receive
+      // 受け取るはずのETHを計算する
       const expectedEthToReceive = (amountToBuy * ethers.parseEther("1")) / BigInt(1e18);
 
-      // Redeem tokens and expect event
+      // トークンを償還し、イベントを期待する
       await expect(predictionMarket.connect(redeemer).redeemWinningTokens(amountToBuy))
         .to.emit(predictionMarket, "WinningTokensRedeemed")
         .withArgs(redeemer.address, amountToBuy, expectedEthToReceive);
@@ -1496,10 +1496,10 @@ describe("📈📉🏎️ Prediction Markets Challenge", function () {
       );
       await predictionMarket.waitForDeployment();
 
-      // Report YES as winning outcome
+      // YESを勝ちの結果として報告する
       await predictionMarket.connect(oracle).report(0);
 
-      // Attempt to redeem as owner (should revert)
+      // オーナーとして償還を試みる(revertするはず)
       await expect(
         predictionMarket.connect(owner).redeemWinningTokens(ethers.parseEther("1")),
       ).to.be.revertedWithCustomError(predictionMarket, "PredictionMarket__OwnerCannotCall");

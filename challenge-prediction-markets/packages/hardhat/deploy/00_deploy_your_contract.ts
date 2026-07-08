@@ -3,16 +3,16 @@ import { parseEther } from "viem";
 import * as fs from "fs";
 
 /**
- * Deploys a contract named "PredictionMarket" using the deployer account.
+ * デプロイヤーアカウントを使って「PredictionMarket」という名前のコントラクトをデプロイする
  *
- * On localhost, the deployer account is the one that comes with Hardhat, which is already funded.
+ * localhostでは、デプロイヤーアカウントはHardhatに付属しているもので、あらかじめ資金が入っている
  *
- * When deploying to live networks (e.g `yarn deploy --network sepolia`), the deployer account
- * should have sufficient balance to pay for the gas fees for contract creation.
+ * 本番ネットワークにデプロイする場合(例: `yarn deploy --network sepolia`)、デプロイヤーアカウントは
+ * コントラクト作成のガス代を支払うのに十分な残高を持っている必要がある
  *
- * You can generate a random account with `yarn generate` or `yarn account:import` to import your
- * existing PK which will fill DEPLOYER_PRIVATE_KEY_ENCRYPTED in the .env file (used in hardhat.config.ts).
- * Run `yarn account` to check the deployer balance on every network.
+ * `yarn generate` でランダムなアカウントを生成するか、`yarn account:import` で既存の秘密鍵をインポートできる
+ * (インポートすると .env ファイルの DEPLOYER_PRIVATE_KEY_ENCRYPTED が設定され、hardhat.config.ts で使われる)。
+ * `yarn account` を実行すると、各ネットワークでのデプロイヤーの残高を確認できる。
  */
 export default deployScript(
   async env => {
@@ -35,7 +35,7 @@ export default deployScript(
 
     console.log("PredictionMarket deployed to:", predictionMarket.address);
 
-    // Get the deployed contract's address and ABI for the YES and NO tokens and copy them to the deployments directory
+    // デプロイされたYES・NOトークンのアドレスとABIを取得し、deploymentsディレクトリにコピーする
     try {
       const i_yesToken = (await env.read(predictionMarket, { functionName: "i_yesToken" })) as `0x${string}`;
       const i_noToken = (await env.read(predictionMarket, { functionName: "i_noToken" })) as `0x${string}`;
@@ -51,7 +51,7 @@ export default deployScript(
       console.error("Error handling token files:", error);
     }
   },
-  // Tags are useful if you have multiple deploy files and only want to run one of them.
-  // e.g. yarn deploy --tags PredictionMarket
+  // タグは、複数のデプロイファイルがあり、そのうち1つだけを実行したい場合に便利
+  // 例: yarn deploy --tags PredictionMarket
   { tags: ["PredictionMarket"] },
 );

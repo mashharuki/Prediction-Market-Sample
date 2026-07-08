@@ -111,7 +111,7 @@ export function PredictionMarketInfoLP() {
         <div className="mt-6 space-y-6">
           {!isReported ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Yes Token */}
+              {/* Yesトークン */}
               <div className="bg-base-200 p-4 rounded-lg border-4 border-green-500">
                 <h2 className="text-2xl font-semibold mb-2">&quot;{yesOutcome}&quot; Token</h2>
                 <h3 className="text-lg mb-2">
@@ -161,7 +161,7 @@ export function PredictionMarketInfoLP() {
                 </h3>
               </div>
 
-              {/* No Token */}
+              {/* Noトークン */}
               <div className="bg-base-200 p-4 rounded-lg border-4 border-red-500">
                 <h2 className="text-2xl font-semibold mb-2">&quot;{noOutcome}&quot; Token</h2>
                 <h3 className="text-lg mb-2">

@@ -51,7 +51,7 @@ export function AddRemoveLiquidity() {
           <>
             <h2 className="card-title">Liquidity Management</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Buy Section */}
+              {/* 購入セクション */}
               <div className="card bg-base-200 shadow">
                 <div className="card-body">
                   <h3 className="font-semibold">Add Liquidity</h3>

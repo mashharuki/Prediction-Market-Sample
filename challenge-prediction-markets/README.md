@@ -5,319 +5,319 @@
   <a href="https://scaffoldeth.io">Website</a>
 </h4>
 
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on the Ethereum blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+🧪 Ethereumブロックチェーン上で分散型アプリケーション(dapps)を構築するための、オープンソースかつ最新のツールキットです。開発者がスマートコントラクトを作成・デプロイし、そのコントラクトとやり取りするユーザーインターフェースを構築しやすくすることを目指しています。
 
 > [!NOTE]
-> 🤖 Scaffold-ETH 2 is AI-ready! It has everything agents need to build on Ethereum. Check `.agents/`, `.claude/`, `.opencode` or `.cursor/` for more info.
+> 🤖 Scaffold-ETH 2はAI対応です!エージェントがEthereum上で開発するために必要なものが揃っています。詳しくは `.agents/`、`.claude/`、`.opencode`、`.cursor/` を確認してください。
 
-⚙️ Built using NextJS, RainbowKit, Hardhat, Wagmi, Viem, and Typescript.
+⚙️ NextJS、RainbowKit、Hardhat、Wagmi、Viem、Typescriptを使って構築されています。
 
-- ✅ **Contract Hot Reload**: Your frontend auto-adapts to your smart contract as you edit it.
-- 🪝 **[Custom hooks](https://docs.scaffoldeth.io/hooks/)**: Collection of React hooks wrapper around [wagmi](https://wagmi.sh/) to simplify interactions with smart contracts with typescript autocompletion.
-- 🧱 [**Components**](https://docs.scaffoldeth.io/components/): Collection of common web3 components to quickly build your frontend.
-- 🔥 **Burner Wallet & Local Faucet**: Quickly test your application with a burner wallet and local faucet.
-- 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with the Ethereum network.
+- ✅ **コントラクトのホットリロード**: コントラクトを編集すると、フロントエンドが自動的に追従します。
+- 🪝 **[カスタムフック](https://docs.scaffoldeth.io/hooks/)**: [wagmi](https://wagmi.sh/) をラップしたReactフック集で、typescriptの自動補完付きでスマートコントラクトとのやり取りを簡単にします。
+- 🧱 [**コンポーネント**](https://docs.scaffoldeth.io/components/): フロントエンドを素早く構築するための、よく使われるweb3コンポーネント集です。
+- 🔥 **バーナーウォレット & ローカルフォーセット**: バーナーウォレットとローカルフォーセットを使って、アプリケーションを素早くテストできます。
+- 🔐 **ウォレットプロバイダーとの連携**: 様々なウォレットプロバイダーに接続し、Ethereumネットワークとやり取りできます。
 
 ![Debug Contracts tab](https://github.com/scaffold-eth/scaffold-eth-2/assets/55535804/b237af0c-5027-4849-a5c1-2e31495cccb1)
 
-## Requirements
+## 必要な環境
 
-Before you begin, you need to install the following tools:
+始める前に、以下のツールをインストールしておく必要があります。
 
 - [Node (>= v20.18.3)](https://nodejs.org/en/download/)
-- Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
+- Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) または [v2+](https://yarnpkg.com/getting-started/install))
 - [Git](https://git-scm.com/downloads)
 
 
-# 📈📉🏎️ Prediction Markets Challenge
+# 📈📉🏎️ Prediction Markets チャレンジ
 
 ![readme-4](packages/nextjs/public/hero.png)
 
-## Introduction
+## はじめに
 
-🔮 This challenge will guide you through building and understanding a simple prediction market, where users can buy and sell ERC20 outcome shares based on the result of an event. You'll step into three roles: liquidity provider, oracle, and user. The event? A car race between a green and a red car! 🏎️🏁
+🔮 このチャレンジでは、あるイベントの結果に基づいてユーザーがERC20の結果トークンを売買できる、シンプルな予測市場を構築しながらその仕組みを学びます。あなたは流動性プロバイダー、オラクル、ユーザーという3つの役割を体験します。イベントの内容は、緑の車と赤の車によるカーレース!🏎️🏁
 
-We'll guide you through the fundamental Solidity functions and explore how a fully on-chain prediction market could be structured.
+Solidityの基本的な関数を通して、完全にオンチェーンな予測市場がどのように構成できるかを見ていきます。
 
-<details markdown='1'><summary>How Prediction Markets Evolved (click to expand)</summary>
+<details markdown='1'><summary>予測市場はどう発展してきたか(クリックで展開)</summary>
 
-Prediction markets themselves have been around for a long time, with records of **election betting on Wall Street dating back to 1884** (see [this Wikipedia page](https://en.wikipedia.org/wiki/Prediction_market)). On Ethereum, they’ve been a topic of interest for quite some time, but it took them some time to really take off.
+予測市場そのものは古くから存在しており、**1884年にはウォール街で選挙の賭けが行われていた**という記録があります([このWikipediaのページ](https://en.wikipedia.org/wiki/Prediction_market)を参照)。Ethereum上でも予測市場は以前から関心を集めていましたが、実際に普及するまでには時間がかかりました。
 
-Polymarket, a prediction market, is one of the most widely used blockchain applications today by both crypto natives and everyday users. It gained especially significant traction around the **U.S. elections**.
+予測市場の一つであるPolymarketは、暗号資産ネイティブの人々だけでなく一般のユーザーにも今日最も広く使われているブロックチェーンアプリケーションの一つです。特に**米国大統領選挙**の際に大きな注目を集めました。
 
-For example, during the **2024 U.S. Presidential Election**, **Polymarket** saw over **$3.3 billion** wagered on the race between **Donald Trump and Kamala Harris** (as of November 5, 2024). (see [Wikipedia](https://en.wikipedia.org/wiki/Polymarket))
+例えば、**2024年米国大統領選挙**では、**Polymarket**で**ドナルド・トランプ氏とカマラ・ハリス氏**の対決に**33億ドル**以上が賭けられました(2024年11月5日時点)。([Wikipedia](https://en.wikipedia.org/wiki/Polymarket)を参照)
 
-At its core, a prediction market is a **betting market** where users can wager on the outcome of a future event with a **fixed end date**. The key difference from traditional betting platforms is that, in most cases, **once you place a bet, you’re locked in**. But in a **prediction market**, you can **sell your position** before the event concludes. Additionally, you are also getting all the on-chain benefits of being permissionless.
+予測市場とは本質的に、**決まった終了日**を持つ将来のイベントの結果にユーザーが賭けられる**賭けの市場**です。従来の賭けプラットフォームとの大きな違いは、多くの場合**一度賭けたら、それで確定**という点です。しかし**予測市場**では、イベントが終わる前に**自分のポジションを売却する**ことができます。さらに、パーミッションレスであるというオンチェーンならではのメリットも享受できます。
 
-The more people bet on a particular outcome, the **more expensive** that side becomes, while the opposite side gets **cheaper**. This **dynamic pricing mechanism** determines an implied **probability**, which can sometimes be more accurate than expert opinions, polls, or pundits. Since a monetary incentive exists to “update” a data point when there is profit potential, and there is a disincentive to misreport in the form of financial loss.
+ある結果に賭ける人が増えれば増えるほど、その側は**より高価**になり、逆側は**より安価**になります。この**動的な価格決定メカニズム**によって暗黙の**確率**が導かれ、それは専門家の意見や世論調査、評論家の見解よりも正確になることがあります。利益が出る見込みがあるときにデータポイントを「更新」する金銭的インセンティブが存在し、逆に誤報告には金銭的損失という形でディスインセンティブが働くからです。
 
  </details>
 
-### 🧠 How Our Prediction Market Works
+### 🧠 私たちの予測市場の仕組み
 
-We build a binary prediction market, meaning users bet on a yes-or-no question, like in this case:
+私たちが構築するのは二択の予測市場です。つまりユーザーは、今回でいえば次のようなyes/no形式の質問に賭けます。
 
-> ❓ Will the green car win the race?
+> ❓ 緑の車はレースに勝つか?
 
-When you buy a share, you’re choosing between two outcome tokens: "Yes" and "No". Each share can be traded any time before the market closes.
+シェアを購入するとき、あなたは「Yes」と「No」という2つの結果トークンのどちらかを選ぶことになります。各シェアは、市場がクローズするまではいつでも取引できます。
 
-- ✅ If you hold the winning token, it pays out 0.01 ETH
+- ✅ 勝ったトークンを保有していれば、0.01 ETHが支払われます
 
-- ❌ If you hold the losing token, it’s worth 0 ETH
+- ❌ 負けたトークンを保有していれば、その価値は0 ETHになります
 
-- 🧮 Before the result is known, token prices fluctuate between 0 and 0.01 ETH, reflecting the probability of each outcome
+- 🧮 結果が判明する前は、トークン価格は0〜0.01 ETHの間で変動し、それぞれの結果の確率を反映します
 
-- 🔄 The sum of both token prices always equals 0.01 ETH, just like on Polymarket where one share pays out 1 USDC
+- 🔄 両方のトークン価格の合計は常に0.01 ETHになります。Polymarketで1シェアが1 USDCを支払うのと同じ仕組みです
 
-### 🔄 Why Ours Is Different
+### 🔄 私たちのバージョンが違う点
 
-Unlike traditional betting markets, we don’t lock you in after buying. You can buy or sell outcome shares anytime, as long as the market hasn’t been resolved.
+従来の賭けの市場とは異なり、購入した後もロックインされません。市場が解決されていない限り、いつでも結果シェアを売買できます。
 
-Instead of an order book like Polymarket, we use an Automated Market Maker (AMM). That means:
+Polymarketのようなオーダーブックの代わりに、私たちはオートメイテッド・マーケット・メーカー(AMM)を使います。つまり:
 
-- 🧪 You can trade instantly — no need to find someone on the other side
+- 🧪 反対側の相手を探す必要がなく、即座に取引できます
 
-- 💸 It’s easier to implement and more gas-efficient on-chain
+- 💸 実装が簡単で、オンチェーンでのガス効率も良くなります
 
-### 💧 Where Liquidity Comes From
+### 💧 流動性はどこから来るのか
 
-To launch a market, someone must provide initial liquidity — locking in collateral to back the outcome tokens.
+市場を立ち上げるには、誰かが初期流動性を提供し、結果トークンを裏付ける担保をロックする必要があります。
 
-- Liquidity providers (LPs) earn fees from trading activity
+- 流動性プロバイダー(LP)は、取引活動から手数料を得ます
 
-- But they also take on risk, since losing tokens become worthless
+- しかし同時にリスクも負います。負けたトークンは無価値になるからです
 
-That’s why popular platforms curate markets to ensure there’s enough interest and volume [see Polymarket docs](https://learn.polymarket.com/docs/guides/get-started/what-is-polymarket/).
+そのため、人気のあるプラットフォームは、十分な関心と取引量が見込める市場だけを厳選しています([Polymarketのドキュメントを参照](https://learn.polymarket.com/docs/guides/get-started/what-is-polymarket/))。
 
-### 🌐 But Who Decides the Outcome?
+### 🌐 でも、誰が結果を決めるのか?
 
-Blockchains can’t know if a race was won or lost — so we use oracles.
+ブロックチェーンは、レースに勝ったか負けたかを知ることができません。そこでオラクルの出番です。
 
-An oracle is a decentralized way to fetch real-world data (like “Which car won?”) and report it on-chain in a way that everyone can trust. Without oracles, there’s no way to settle prediction markets securely.
+オラクルとは、現実世界のデータ(「どちらの車が勝ったか」など)を取得し、誰もが信頼できる形でオンチェーンに報告するための分散的な仕組みです。オラクルがなければ、予測市場を安全に決済する方法がありません。
 
-Let's jump into the challenge.
+それでは、チャレンジに入りましょう。
 
-> 💬 Meet other builders working on this challenge and get help in the [Prediction Markets Challenge Telegram Group](https://t.me/+NY00cDZ7PdBmNWEy)
+> 💬 このチャレンジに取り組む他のビルダーと出会い、助けを得るには [Prediction Markets Challenge Telegramグループ](https://t.me/+NY00cDZ7PdBmNWEy) へ
 
 ---
 
-## Checkpoint 0: 📦 Environment 📚
+## Checkpoint 0: 📦 環境構築 📚
 
-> Start your local network (a blockchain emulator in your computer)
+> ローカルネットワーク(あなたのコンピュータ上で動くブロックチェーンのエミュレータ)を起動します
 
 ```sh
 yarn chain
 ```
 
-in a second terminal window, 🛰 deploy your contract (locally):
+2つ目のターミナルウィンドウで、🛰 コントラクトを(ローカルに)デプロイします:
 
 ```sh
 yarn deploy
 ```
 
-in a third terminal window, start your 📱 front-end:
+3つ目のターミナルウィンドウで、📱 フロントエンドを起動します:
 
 ```sh
 yarn start
 ```
 
-📱 Open [http://localhost:3000](http://localhost:3000/) to see the app.
+📱 [http://localhost:3000](http://localhost:3000/) を開いて、アプリを確認してください。
 
-> 👩‍💻 Rerun `yarn deploy` whenever you want to deploy contract changes to the frontend. Run `yarn deploy --reset` for a completely fresh deploy, even when contracts are unchanged.
+> 👩‍💻 コントラクトの変更をフロントエンドに反映させたいときは、いつでも `yarn deploy` を再実行してください。コントラクトに変更がなくても完全に新規デプロイしたい場合は `yarn deploy --reset` を実行します。
 
-Head to the **`Debug Contracts`** tab and you should find a smart contract named **`PredictionMarket`**. This is our main contract and the one we'll be working on throughout the challenge. Since we haven't implemented any functions yet, they all shouldn't work, nor will you see all the necessary state variables.
+**`Debug Contracts`** タブに移動すると、**`PredictionMarket`** という名前のスマートコントラクトが見つかるはずです。これが私たちのメインコントラクトであり、このチャレンジを通して実装していくものです。まだどの関数も実装していないため、すべて動作しないはずですし、必要な状態変数もまだ表示されません。
 
-> 🏎️ 🏁 Since we want to build a prediction market around our car race head to the `User` tab and check it out! (The race is entirely separate and has no impact on the smart contract.)
-
----
-
-⚠️ We've disabled Cursor auto-suggestions (Tab completions and predictions) via `.vscode/settings.json` to reduce distractions while you code. AI chat and agent features are still enabled, and we've included `AGENTS.md` and `CLAUDE.md` files with project context to help AI assistants understand the codebase.
-
-🔒 Want to disable AI and do everything yourself? (Recommended for deeper learning):
-
-- Cursor: add `*` to a `.cursorignore` file in the root of your project
-- VSCode: set `chat.disableAIFeatures` to `true` in `.vscode/settings.json` file
+> 🏎️ 🏁 カーレースを題材にした予測市場を作りたいので、`User` タブに行って確認してみましょう!(レース自体は完全に独立していて、スマートコントラクトには一切影響しません。)
 
 ---
 
-## 🤖 AI-Guided Learning Mode (Optional)
+⚠️ コーディング中の気が散る要素を減らすため、`.vscode/settings.json` でCursorの自動提案(Tab補完と予測)を無効化しています。AIチャットとエージェント機能は引き続き有効で、AIアシスタントがコードベースを理解する助けとなるよう `AGENTS.md` と `CLAUDE.md` ファイルにプロジェクトのコンテキストを含めています。
 
-Want an interactive tutor that teaches you the concepts while you code? This challenge supports **AI-guided learning mode**!
+🔒 AIを無効化して、すべて自分の力でやりたいですか?(より深く学ぶためにはおすすめです):
 
-1. Open this project in an AI coding tool like **Claude Code** or **Cursor**
-2. Run the `/start` command
-3. The AI tutor will teach you each concept, then give you a coding task
-4. You write the code, say **"check"**, and the AI runs the tests
-5. Say **"hint"** for help, or **`/skip`** if you want the AI to show you the solution
-6. Your progress is saved — use `/start` to resume anytime
-
-The AI won't just give you the answers — it teaches first, then has you implement the code yourself. Tests validate your work, and the AI helps you debug if something doesn't pass.
+- Cursor: プロジェクトルートの `.cursorignore` ファイルに `*` を追加してください
+- VSCode: `.vscode/settings.json` ファイルで `chat.disableAIFeatures` を `true` に設定してください
 
 ---
 
-## Checkpoint 1: 🔭 The Structure of the protocol 📺
+## 🤖 AIガイド学習モード(任意)
 
-At its core, our prediction market has three essential parts:
+コーディングしながら概念を教えてくれるインタラクティブな講師が欲しいですか?このチャレンジは**AIガイド学習モード**に対応しています!
 
-- 🪙 Tokens (like ERC20s) to represent outcomes
+1. **Claude Code** や **Cursor** のようなAIコーディングツールでこのプロジェクトを開く
+2. `/start` コマンドを実行する
+3. AI講師が各コンセプトを教え、その後コーディング課題を出します
+4. あなたがコードを書き、**「check」**と言うと、AIがテストを実行します
+5. 助けが必要なら**「hint」**と言うか、AIに解答を見せてほしければ **`/skip`** と言ってください
+6. 進捗は保存されます — いつでも `/start` で再開できます
 
-- 💧 Trading mechanism (AMM or order book) to let users buy/sell shares
+AIは単に答えを教えるのではなく、まず教えてから、あなた自身にコードを実装させます。テストがあなたの成果を検証し、パスしない場合はAIがデバッグを手伝います。
 
-- 🔮 An oracle to settle the final outcome
+---
 
-In our version, when you deploy the market, it spins up two ERC20 tokens — one for "Yes", one for "No".
+## Checkpoint 1: 🔭 プロトコルの構造 📺
 
-🧱 You’ll find the token logic in `packages/hardhat/contracts/PredictionMarketToken.sol`
+私たちの予測市場は、本質的に3つの重要なパーツから成り立っています。
 
-This contract extends the standard ERC20 spec with custom minting and burning logic. There’s also a transfer restriction in place to prevent the market owner from moving tokens — more on why later 👀
+- 🪙 結果を表すトークン(ERC20のようなもの)
 
-### 🛠️ The Main Contract: PredictionMarket.sol
+- 💧 ユーザーがシェアを売買できる取引の仕組み(AMMまたはオーダーブック)
 
-You’ll be working directly in `packages/hardhat/contracts/PredictionMarket.sol`.
+- 🔮 最終的な結果を決着させるオラクル
 
-Our protocol revolves around three roles:
+私たちのバージョンでは、市場をデプロイすると2つのERC20トークンが生成されます。1つは「Yes」用、もう1つは「No」用です。
 
-1. **👷‍♂️ Market Owner & Liquidity Provider** – sets up the market and seeds it with ETH
+🧱 トークンのロジックは `packages/hardhat/contracts/PredictionMarketToken.sol` にあります
 
-2. **🧙 Oracle** – reports the final outcome (yes or no)
+このコントラクトは、標準的なERC20仕様をカスタムのミント・バーンロジックで拡張したものです。また、市場のオーナーがトークンを移動できないようにする転送制限もあります — 理由は後ほど説明します 👀
 
-3. **🙋‍♂️ User** – trades shares and tries to win ETH
+### 🛠️ メインコントラクト: PredictionMarket.sol
 
-And guess what? You’ll take on all three roles during this challenge.
+`packages/hardhat/contracts/PredictionMarket.sol` を直接編集していくことになります。
 
-But we’ll start with the most important one: **👉 Market Owner & Liquidity Provider**
+私たちのプロトコルは、3つの役割を中心に成り立っています。
 
-### 💦 Why Liquidity Comes First
+1. **👷‍♂️ マーケットオーナー兼流動性プロバイダー** – 市場をセットアップし、ETHで資金を投入する
 
-In an AMM-based system like ours, markets can’t function without initial liquidity. That means someone must deposit ETH up front.
+2. **🧙 オラクル** – 最終的な結果(yesかno)を報告する
 
-Here’s what happens when a new market is deployed:
+3. **🙋‍♂️ ユーザー** – シェアを取引し、ETHを獲得しようとする
 
-- ETH is deposited as collateral
+そして何と、このチャレンジではあなたがこの3つの役割すべてを担うことになります。
 
-- The contract creates the "Yes" and "No" ERC20 tokens
+でもまずは、最も重要な役割から始めましょう:**👉 マーケットオーナー兼流動性プロバイダー**
 
-- It mints tokens and adds them to the liquidity pool
+### 💦 なぜ流動性が最初なのか
 
-- Later on, more liquidity can be added or removed
+私たちのようなAMMベースのシステムでは、初期流動性なしには市場は機能しません。つまり、誰かが最初にETHを預け入れる必要があります。
 
-You’ll implement this logic in Checkpoints 2, 3, 4, and 6, under the Liquidity Provider tab.
+新しい市場がデプロイされると、次のようなことが起こります:
 
-<details markdown='1'><summary>Have a look at the Liquidity Provider tab (click to expand)</summary>
+- 担保としてETHが預け入れられる
+
+- コントラクトが「Yes」と「No」のERC20トークンを作成する
+
+- トークンをミントし、流動性プールに追加する
+
+- その後、流動性をさらに追加したり引き出したりできる
+
+このロジックはCheckpoint 2、3、4、6で、Liquidity Providerタブの下に実装していきます。
+
+<details markdown='1'><summary>Liquidity Providerタブを見てみましょう(クリックで展開)</summary>
     <img src="packages/nextjs/public/lp1.png" alt="pm-lp1" />
 </details>
 
-> ❗️In the current state your front-end is already implemented but the buttons of the different functions will likely break since there is no implementation code within your smart contracts yet. But soon there will! 🙂
+> ❗️現時点ではフロントエンドはすでに実装済みですが、スマートコントラクトにまだ実装コードがないため、各種機能のボタンはおそらく正常に動作しません。でも、もうすぐ動くようになります!🙂
 
-### 🔮 Be the Oracle
+### 🔮 オラクルになる
 
-Once the market is set up, someone needs to decide how it ends.
+市場がセットアップされたら、次は誰かがその決着方法を決める必要があります。
 
-In Checkpoint 5, you’ll become the Oracle — the one who reports the final outcome of the event on-chain (Oracle tab).
+Checkpoint 5では、あなたがオラクルになります — オンチェーンでイベントの最終結果を報告する役です(Oracleタブ)。
 
-> 🧙‍♂️ Oracles are how off-chain facts (like “Did the green car win?”) make their way into the blockchain world.
+> 🧙‍♂️ オラクルとは、(「緑の車は勝ったか?」のような)オフチェーンの事実がブロックチェーンの世界に入ってくるための仕組みです。
 
-<details markdown='1'><summary>Have a look at the Oracle tab (click to expand)</summary>
+<details markdown='1'><summary>Oracleタブを見てみましょう(クリックで展開)</summary>
     <img src="packages/nextjs/public/oracle1.png" alt="pm-oracle1" />
 </details>
 
-### 👥 Then It's Time to Trade!
+### 👥 そしていよいよ取引の時間!
 
-After the market is created and the oracle is ready, it’s the users’ turn to jump in (User tab).
+市場が作成され、オラクルの準備が整ったら、次はユーザーの出番です(Userタブ)。
 
-In Checkpoints 7 to 9, you’ll build out the core user actions:
+Checkpoint 7から9では、ユーザーの主要な操作を構築していきます:
 
-- 🛒 Buy outcome tokens
+- 🛒 結果トークンを購入する
 
-- 💸 Sell them to exit positions
+- 💸 ポジションを解消するために売却する
 
-- 🎉 Redeem them once the result is in
+- 🎉 結果が出たら償還する
 
-You’ll have full trading functionality from end to end — all powered by your smart contracts.
+これで、あなた自身のスマートコントラクトによって動く、エンドツーエンドの完全な取引機能ができあがります。
 
-<details markdown='1'><summary>Have a look at the User tab (click to expand)</summary>
+<details markdown='1'><summary>Userタブを見てみましょう(クリックで展開)</summary>
     <img src="packages/nextjs/public/user1.png" alt="pm-user1" />
 </details>
 
-> 🎉 You've made it this far in Scaffold-Eth Challenges 👏🏼 . As things get more complex, it might be good to review the design requirements of the challenge first! Check out the empty PredictionMarket.sol file to see aspects of each function. If you can explain how each function will work with one another, that's great! 😎
+> 🎉 Scaffold-Ethチャレンジもここまで来ました 👏🏼 。物事が複雑になってきたので、まず一度チャレンジの設計要件を見直しておくとよいでしょう!空の状態のPredictionMarket.solファイルを見て、各関数がどんな役割を担うのか確認してください。それぞれの関数がどう連携するのか説明できれば最高です!😎
 
-> 🚨 🚨 🦈 The Guiding Questions will lead you in the right direction, but try thinking about how you would structure each function before looking at these!
+> 🚨 🚨 🦈 Guiding Questions(導きの質問)は正しい方向へ導いてくれますが、これらを見る前に、まずは自分でどう各関数を組み立てるか考えてみましょう!
 
-> 🚨 🚨 🦖 The code blobs within the toggles in the Guiding Questions are some examples of what you can use, but try writing the implementation code for the functions first!
+> 🚨 🚨 🦖 Guiding Questionsのトグル内にあるコードの断片は使えるサンプルの一例ですが、まずは自分で実装コードを書いてみましょう!
 
-## Checkpoint 2: 🔭 The Prediction Market Setup 🏠
+## Checkpoint 2: 🔭 予測市場のセットアップ 🏠
 
-Before we can deploy our prediction market smart contract, we need to set up the constructor and declare some critical variables — this is the foundation the whole market will run on.
+予測市場のスマートコントラクトをデプロイする前に、コンストラクタをセットアップし、いくつかの重要な変数を宣言する必要があります — これが市場全体の土台になります。
 
-Think of this step as bootstrapping your protocol’s brain 🧠
+このステップは、プロトコルの「脳」をブートストラップする作業だと考えてください 🧠
 
-### 🧱 Constructor Parameters
+### 🧱 コンストラクタのパラメータ
 
-When you deploy the market, you’ll provide:
+市場をデプロイするとき、以下を渡します:
 
-- **💧 `_liquidityProvider`** - the owner address which will be passed directly into Ownable
+- **💧 `_liquidityProvider`** - Ownableにそのまま渡されるオーナーアドレス
 
-- **🧙 `_oracle`** – the address that will later report the outcome
+- **🧙 `_oracle`** – 後で結果を報告することになるアドレス
 
-- **❓ `_question`** – the actual prediction being asked (e.g., "Will the green car win?")
+- **❓ `_question`** – 実際に問われる予測の内容(例:「緑の車は勝つか?」)
 
-- **💰 `_initialTokenValue`** – the ETH value a winning token pays out (e.g., 0.01 ETH)
+- **💰 `_initialTokenValue`** – 勝ったトークンが支払うETH価値(例:0.01 ETH)
 
-- **📈 `_initialYesProbability`** – how likely “Yes” is at the start (e.g., 50 for 50%)
+- **📈 `_initialYesProbability`** – 開始時点で「Yes」がどれくらい起こりそうか(例:50%なら50)
 
-- **🔒 `_percentageToLock`** – used in probability + pricing logic (you’ll dive deeper into this in Checkpoint 3)
+- **🔒 `_percentageToLock`** – 確率・価格ロジックで使われる値(詳細はCheckpoint 3で掘り下げます)
 
-### 🧮 Futher State Variables
+### 🧮 その他の状態変数
 
-Your contract will also need to track the following data throughout the life of the market:
+コントラクトは、市場が存在する間、以下のデータも追跡する必要があります:
 
-- **🏆 `s_ethCollateral`**: the total ETH backing the tokens — think of this as your prize pool
+- **🏆 `s_ethCollateral`**: トークンを裏付ける合計ETH — いわば賞金プールです
 
-- **💸 `s_lpTradingRevenue`** - tracks the fees earned from users buying/selling tokens — the LP’s reward
+- **💸 `s_lpTradingRevenue`** - ユーザーがトークンを売買することで得られる手数料を追跡します — LPへの報酬です
 
-> ❗️For easier testing, we set the oracle address to be the same as the liquidity provider during deployment (see `00_deploy_your_contract.ts`). Also, **double-check the parameter values** we're passing into the constructor, like `_question`, etc. (Hint: Add the first Hardhat account to your wallet or add your own account to interact as the oracle or contract owner. You can manually set your address in the deployment script or run `yarn account:import`.)
+> ❗️テストをしやすくするため、デプロイ時にオラクルのアドレスを流動性プロバイダーと同じに設定しています(`00_deploy_your_contract.ts` を参照)。また、`_question` などコンストラクタに渡すパラメータの値も**必ず確認してください**。(ヒント: ウォレットに最初のHardhatアカウントを追加するか、オラクルやコントラクトオーナーとしてやり取りするために自分のアカウントを追加してください。デプロイスクリプトで手動でアドレスを設定するか、`yarn account:import` を実行できます。)
 
-> ⏰ 🚨 In a prediction market in production, you would typically include a time-based restriction, a **fixed end date** to ensure that outcomes can only be reported after the predicted event occurs. For simplicity and ease of testing, we omit this time component in this implementation.
+> ⏰ 🚨 本番環境の予測市場では、通常、予測されたイベントが発生した後にしか結果を報告できないようにするため、**固定の終了日**のような時間制限を含めます。シンプルさとテストのしやすさのため、この実装では時間の要素を省略しています。
 
-> 💡 `i_<variableName>` indicates an immutable variable, whereas `s_<variableName>` is a normal state variable that can be modified.
+> 💡 `i_<変数名>` はイミュータブル(不変)な変数を、`s_<変数名>` は変更可能な通常の状態変数を表します。
 
-Alright, let’s jump into the contract and start laying the foundation of your prediction market!
+さあ、コントラクトに取り掛かって、予測市場の土台を作り始めましょう!
 
-<details markdown='1'><summary>🦉 Guiding Questions</summary>
+<details markdown='1'><summary>🦉 Guiding Questions(導きの質問)</summary>
 
-<details markdown='1'><summary>Question 1</summary>
+<details markdown='1'><summary>質問1</summary>
 
-> What are the most important state variables, we need to track (Hint: look into the constructor)? How can we initialize them with the right value in the constructor? Which variables can be set to `immutable`?
-
-</details>
-
-<details markdown='1'><summary>Question 2</summary>
-
-> What important checks should we include in the constructor before deploying the contract? (Hint: refer to the questions below for additional guidance, and make sure to use the appropriate custom errors from the `errors` section where applicable)
+> 追跡すべき最も重要な状態変数は何でしょうか(ヒント: コンストラクタを見てみましょう)?コンストラクタでそれらをどう正しい値で初期化しますか?どの変数を `immutable` にできますか?
 
 </details>
 
-<details markdown='1'><summary>Question 3</summary>
+<details markdown='1'><summary>質問2</summary>
 
-> How can we ensure that a prediction market cannot be created without any initial liquidity?
-
-</details>
-
-<details markdown='1'><summary>Question 4</summary>
-
-> How do we validate that `_initialYesProbability` is within the valid range of 0% to 100%?
+> コントラクトをデプロイする前に、コンストラクタでどのような重要なチェックを行うべきでしょうか?(ヒント: 追加のガイドとして下の質問を参照し、該当する場合は `errors` セクションにある適切なカスタムエラーを使ってください)
 
 </details>
 
-<details markdown='1'><summary>Question 5</summary>
+<details markdown='1'><summary>質問3</summary>
 
-> How do we prevent `_percentageToLock` from exceeding 100%?
+> 初期流動性なしに予測市場が作成されないようにするには、どうすればよいでしょうか?
 
 </details>
 
-After thinking through the guiding questions, have a look at the solution code!
+<details markdown='1'><summary>質問4</summary>
 
-<details markdown='1'><summary>👩🏽‍🏫 Solution Code</summary>
+> `_initialYesProbability` が0%〜100%の有効な範囲内にあることをどう検証しますか?
+
+</details>
+
+<details markdown='1'><summary>質問5</summary>
+
+> `_percentageToLock` が100%を超えないようにするにはどうすればよいでしょうか?
+
+</details>
+
+Guiding Questionsについてよく考えた後、解答コードを見てみましょう!
+
+<details markdown='1'><summary>👩🏽‍🏫 解答コード</summary>
 
 ```javascript
 //////////////////////////
@@ -374,72 +374,72 @@ constructor(
 
 </details>
 
-Run the following command to check if you have implemented all variables and checks correctly.
+以下のコマンドを実行して、すべての変数とチェックが正しく実装されているか確認してください。
 
 ```sh
 yarn test --grep "Checkpoint2"
 ```
 
-> 🚨 Before we deploy the contract we need to finish implementing the constructor in the next checkpoint 3.
+> 🚨 コントラクトをデプロイする前に、次のCheckpoint 3でコンストラクタの実装を完成させる必要があります。
 
-## Checkpoint 3: 🔨🪙 Mint the tokens
+## Checkpoint 3: 🔨🪙 トークンをミントする
 
-Time to give your prediction market its trading power — by minting the "Yes" and "No" tokens!
+いよいよ予測市場に取引の力を与える番です — 「Yes」と「No」のトークンをミントしましょう!
 
-When you deploy your PredictionMarket contract, you’ll also spin up two ERC20 token contracts, one for each outcome. This all happens right inside the constructor.
+PredictionMarketコントラクトをデプロイすると、各結果に1つずつ、合計2つのERC20トークンコントラクトも同時に立ち上がります。これはすべてコンストラクタの中で行われます。
 
-### 🚀 Deploying the Tokens
+### 🚀 トークンのデプロイ
 
-When deploying the prediction market contract, we also need to deploy the associated **"Yes"** and **"No"** token contracts. To ensure this happens, we instantiate both token contracts inside the constructor.
+予測市場コントラクトをデプロイする際、関連する**「Yes」**と**「No」**のトークンコントラクトもデプロイする必要があります。これを確実に行うため、コンストラクタの中で両方のトークンコントラクトをインスタンス化します。
 
-Your job is to deploy both outcome tokens by passing the right parameters into the PredictionMarketToken constructor.
+あなたの仕事は、PredictionMarketTokenのコンストラクタに正しいパラメータを渡して、両方の結果トークンをデプロイすることです。
 
-You’ll need to provide:
+必要なパラメータは次のとおりです:
 
-- 🏷️ The token **name** ("Yes" or "No")
+- 🏷️ トークンの**名前**(「Yes」または「No」)
 
-- 🔤 The token **symbol** ("Y" or "N")
+- 🔤 トークンの**シンボル**(「Y」または「N」)
 
-- 👤 The market owner’s **address**
+- 👤 市場オーナーの**アドレス**
 
-- 🔢 The **initial token supply** (calculated below)
+- 🔢 **初期トークン供給量**(下記で計算)
 
-To calculate how many tokens to mint, you take the ETH sent into the contract and divide it by `_initialTokenValue`. This gives you the number of outcome tokens the market will be able to support:
+ミントするトークン数を計算するには、コントラクトに送られたETHを `_initialTokenValue` で割ります。これにより、市場がサポートできる結果トークンの数が求まります:
 
 $$
 initialTokenAmount = \frac{msg.value}{initialTokenValue}
 $$
 
-You’ll store your deployed token contracts in the state variables:
+デプロイしたトークンコントラクトは、以下の状態変数に格納します:
 
 - `i_yesToken`
 - `i_noToken`
 
-### 🎯 Setting the Initial Probability
+### 🎯 初期確率の設定
 
-As the market creator, you get to define the starting odds — the initial probability of the "Yes" outcome.
+市場の作成者として、あなたは開始時のオッズ — つまり「Yes」の初期確率を決めることができます。
 
-For example, if you think the green car has a good shot at winning, you might set:
+例えば、緑の車が勝つ見込みが高いと思うなら、次のように設定するかもしれません:
 
 $$
 initialYesProbability = 60
 $$
 
-But here’s the twist: there haven't been any trades yet. So how can the protocol incorporate the initial probability?
+でも、ここで一つひねりがあります。まだ何も取引が行われていないのに、どうやってプロトコルは初期確率を組み込めるのでしょうか?
 
-### 🔒 Locking Tokens to Simulate Probability
+### 🔒 確率をシミュレートするためのトークンロック
 
-We use a token lock mechanism. By locking tokens as if they’ve already been bought, we give the market a stable starting point.
+そこでトークンロックの仕組みを使います。すでに購入されたかのようにトークンをロックすることで、市場に安定した出発点を与えます。
 
-> 🧠 That’s why token transfers are disabled for the market creator in PredictionMarketToken.sol — to keep these locked tokens from circulating.
+> 🧠 だからこそ、PredictionMarketToken.solでは市場の作成者によるトークン転送が無効化されています — これらのロックされたトークンが市場に出回らないようにするためです。
 
-### 🧮 Let’s See It in Action
+### 🧮 実際に見てみましょう
 
-Say we mint 100 "Yes" and 100 "No" tokens.
+「Yes」を100トークン、「No」を100トークンミントするとします。
 
-You want to simulate a 60% "Yes" probability and lock 10% of total tokens.
+「Yes」の確率を60%としてシミュレートし、総トークンの10%をロックしたいとします。
 
-We calculate the locked amount like this:
+ロックする量は次のように計算します:
 
 $$
 lockedYes = 100 * 60\% * 10\% * 2 = 12
@@ -449,66 +449,66 @@ $$
 lockedNo = 100 * 40\% * 10\% * 2 = 8
 $$
 
-That gives us:
+これにより:
 
-- 12 locked "Yes" tokens
+- ロックされた「Yes」トークンが12
 
-- 8 locked "No" tokens
+- ロックされた「No」トークンが8
 
-- 88 "Yes" + 92 "No" tokens available for trading
+- 取引に使える「Yes」が88、「No」が92
 
-So our starting probability looks like:
+となり、開始時の確率は次のようになります:
 
 $$
 \frac{12}{12 + 8} = 60\%
 $$
 
-### 🗝️ Why Locking Matters
+### 🗝️ なぜロックが重要なのか
 
-1. 🧘‍♂️ Smoother starts – Prevents wild swings from a single trade
-   Without locking, a single "Yes" purchase pushes the probability to 100%:
+1. 🧘‍♂️ よりスムーズなスタート – 1回の取引による極端な変動を防ぎます
+   ロックがない場合、最初の「Yes」の購入だけで確率が100%になってしまいます:
 
 $$
 \frac{1}{1 + 0} = 100\%
 $$
 
-2. ⚖️ Price stability – Token price depends on the current market probability:
+2. ⚖️ 価格の安定性 – トークン価格は現在の市場確率に依存します:
 
 $$
 tokenPrice = initialTokenValue * marketProbability
 $$
 
-This gives your market a balanced and fair launch, with built-in stability right from the start.
+これにより、市場は最初からバランスの取れた公正なスタートを切ることができます。
 
-You’re not just minting tokens — you’re shaping the early behavior of your market.
+あなたはただトークンをミントしているだけでなく、市場の初期挙動そのものを形作っているのです。
 
-Ready to code?
+コードを書く準備はできましたか?
 
-> 💡 The percentage can be chosen arbitrarily, it depends on how you want to set up the prediction market. The more you lock from the beginning the lesser the price swings are, but there is also less liquidity to trade.
+> 💡 このパーセンテージは任意に選べます。予測市場をどうセットアップしたいかによって決まります。最初に多くロックするほど価格変動は小さくなりますが、取引できる流動性は少なくなります。
 
-<details markdown='1'><summary>🦉 Guiding Questions</summary>
+<details markdown='1'><summary>🦉 Guiding Questions(導きの質問)</summary>
 
-<details markdown='1'><summary>Question 1</summary>
+<details markdown='1'><summary>質問1</summary>
 
-> How do we calculate the correct initialTokenAmount for each token? (Hint: Don't forget to use the PRECISION constant to handle decimal values properly, as Solidity does not support floating-point arithmetic)
-
-</details>
-
-<details markdown='1'><summary>Question 2</summary>
-
-> How can we create the two token contracts for "Yes" and "No" outcomes and mint the correct amount of tokens for each? (Hint: Take a look at the PredictionMarketToken.sol contract for guidance.)
+> 各トークンの正しいinitialTokenAmountをどう計算しますか?(ヒント: Solidityは浮動小数点演算をサポートしていないため、小数値を正しく扱うためにPRECISION定数を使うのを忘れないでください)
 
 </details>
 
-<details markdown='1'><summary>Question 3</summary>
+<details markdown='1'><summary>質問2</summary>
 
-> After minting the correct amount of tokens, how do we ensure that the appropriate portion is locked away to reflect the initial probability set by the prediction market? How can we correctly transfer these locked tokens to the contract owner's address?
+> 「Yes」と「No」それぞれの結果に対して2つのトークンコントラクトを作成し、正しい量のトークンをミントするにはどうすればよいでしょうか?(ヒント: PredictionMarketToken.solコントラクトを参考にしてください。)
 
 </details>
 
-After thinking through the guiding questions, have a look at the solution code!
+<details markdown='1'><summary>質問3</summary>
 
-<details markdown='1'><summary>👩🏽‍🏫 Solution Code</summary>
+> 正しい量のトークンをミントした後、予測市場が設定した初期確率を反映するように適切な割合をロックするにはどうすればよいでしょうか?これらのロックされたトークンをコントラクトオーナーのアドレスに正しく転送するには?
+
+</details>
+
+Guiding Questionsについてよく考えた後、解答コードを見てみましょう!
+
+<details markdown='1'><summary>👩🏽‍🏫 解答コード</summary>
 
 ```javascript
 //////////////////////////
@@ -571,83 +571,83 @@ constructor(
 
 </details>
 
-Run the following command to check if you have implemented all variables and checks correctly.
+以下のコマンドを実行して、すべての変数とチェックが正しく実装されているか確認してください。
 
 ```sh
 yarn test --grep "Checkpoint3"
 ```
 
-### ✅ Tests Passed? You're So Close!
+### ✅ テストが通りましたか?あと少しです!
 
-Nice work — if your tests are green, you're just one step away from deployment! 🚀
+よくできました — テストがグリーンになっていれば、デプロイまであと一歩です!🚀
 
-Before you hit deploy, do this quick but important fix:
+デプロイボタンを押す前に、次のちょっとした、でも重要な修正を行いましょう:
 
-👇 Scroll down to the `getPrediction()` function in your contract and…
+👇 コントラクト内の `getPrediction()` 関数までスクロールして…
 
-🧩 Uncomment everything below: `/// Checkpoint 3 ///`
+🧩 `/// Checkpoint 3 ///` より下をすべてアンコメントしてください
 
-This function brings our values to the front-end.
+この関数が、値をフロントエンドに届けてくれます。
 
-> 💡 You might see warnings like "Unused function parameter: isReported" or winningToken — no worries, you can safely ignore those for now.
+> 💡 「Unused function parameter: isReported」や winningToken といった警告が出るかもしれませんが、今は気にせず無視して大丈夫です。
 
-Once that's done, you're ready to deploy! 🔗
+これが終わればデプロイの準備完了です!🔗
 
-> Run `yarn deploy` and check out the front-end
+> `yarn deploy` を実行して、フロントエンドを確認してください
 
-Once deployed, head over to the **Debug** page to inspect the initialized values.
+デプロイが終わったら、**Debug**ページに移動して初期化された値を確認しましょう。
 
-The tab **Liquidity Provider** in the front-end should now also display the initial question, initial liquidity/probability and further relevant variables (see screenshot below how it should look like).
+フロントエンドの **Liquidity Provider** タブには、初期の質問、初期流動性/確率、その他の関連変数が表示されるはずです(下のスクリーンショットのような見た目になります)。
 
 ![ch-6-lp2](packages/nextjs/public/lp2.png)
 
-## Checkpoint 4: 💦 More Liquidity
+## Checkpoint 4: 💦 さらなる流動性
 
-Now that your market is live, it’s time to give the liquidity provider more control 💪
+市場が稼働し始めたので、次は流動性プロバイダーにさらなるコントロール権を与えましょう 💪
 
-In this checkpoint, you'll implement the `addLiquidity` and `removeLiquidity` functions — allowing the market owner to inject more ETH or pull it out, while automatically minting or burning outcome tokens to keep the balance.
+このCheckpointでは `addLiquidity` と `removeLiquidity` 関数を実装します — これにより市場オーナーはETHを追加投入したり引き出したりでき、その際バランスを保つために結果トークンが自動的にミント・バーンされます。
 
-To keep things simple, we’re only allowing the original market creator to call these functions. That’s already enforced with the `onlyOwner` modifier 🔒
+シンプルにするため、これらの関数を呼び出せるのは元々の市場作成者のみとします。これはすでに `onlyOwner` 修飾子で強制されています 🔒
 
-Let’s build it! 🧱
+さあ、作っていきましょう!🧱
 
-> 💡 The events are already defined in the **events** section.
+> 💡 イベントはすでに**events**セクションで定義されています。
 
-<details markdown='1'><summary>🦉 Guiding Questions</summary>
+<details markdown='1'><summary>🦉 Guiding Questions(導きの質問)</summary>
 
-<details markdown='1'><summary>Question 1</summary>
+<details markdown='1'><summary>質問1</summary>
 
-> How do we track newly added liquidity, and how do we mint the corresponding amount of "YES" and "NO" tokens for the prediction market?
-
-</details>
-
-<details markdown='1'><summary>Question 2</summary>
-
-> What validations or checks should we implement in the removeLiquidity function?
+> 新しく追加された流動性をどう追跡し、予測市場のために対応する量の「YES」「NO」トークンをどうミントしますか?
 
 </details>
 
-<details markdown='1'><summary>Question 3</summary>
+<details markdown='1'><summary>質問2</summary>
 
-> How do we determine the correct amount of tokens to remove, and what is the process for removing them? (Hint: Refer to PredictionMarketToken.sol)
-
-</details>
-
-<details markdown='1'><summary>Question 4</summary>
-
-> Which state variable needs to be updated during this process?
+> removeLiquidity関数では、どのようなバリデーションやチェックを実装すべきでしょうか?
 
 </details>
 
-<details markdown='1'><summary>Question 5</summary>
+<details markdown='1'><summary>質問3</summary>
 
-> Which events do we want to emit? (Hint: have a look into the predefined events)
+> 削除すべき正しいトークン量をどう決定し、それらをどう削除しますか?(ヒント: PredictionMarketToken.solを参照してください)
 
 </details>
 
-After thinking through the guiding questions, have a look at the solution code!
+<details markdown='1'><summary>質問4</summary>
 
-<details markdown='1'><summary>👩🏽‍🏫 Solution Code</summary>
+> この処理の中で、どの状態変数を更新する必要がありますか?
+
+</details>
+
+<details markdown='1'><summary>質問5</summary>
+
+> どのイベントを発行したいですか?(ヒント: あらかじめ定義されているイベントを見てみましょう)
+
+</details>
+
+Guiding Questionsについてよく考えた後、解答コードを見てみましょう!
+
+<details markdown='1'><summary>👩🏽‍🏫 解答コード</summary>
 
 ```javascript
 /////////////////
@@ -696,94 +696,94 @@ function removeLiquidity(uint256 _ethToWithdraw) external onlyOwner {
 
 </details>
 
-Run the following command to check if you have implemented the functions correctly.
+以下のコマンドを実行して、関数が正しく実装されているか確認してください。
 
 ```sh
 yarn test --grep "Checkpoint4"
 ```
 
-## Checkpoint 5: 🔮 Let the oracle report
+## Checkpoint 5: 🔮 オラクルに報告させる
 
-Ethereum is a closed world — it doesn’t know what’s happening off-chain. That’s by design, to keep data secure and tamper-proof.
-But sometimes, we need to break that boundary.
+Ethereumは閉じた世界です — オフチェーンで何が起きているかを知りません。これはデータの安全性と改ざん耐性を保つための設計です。
+しかし時には、その境界を越える必要があります。
 
-That’s where oracles come in — they’re the messengers that bring off-chain truth on-chain.
+そこで登場するのがオラクルです — オフチェーンの真実をオンチェーンに届けるメッセンジャーです。
 
-### 🧙 What Does Our Oracle Do?
+### 🧙 私たちのオラクルは何をするのか?
 
-In our case, the oracle has one job:
+今回のケースでは、オラクルの仕事は1つだけです:
 
-**👉 Tell the contract which car won the race.**
+**👉 どちらの車がレースに勝ったかをコントラクトに伝えること。**
 
-To do that, it will call a smart contract write function and pass in the final outcome — either "Yes" or "No".
+そのために、オラクルはスマートコントラクトの書き込み関数を呼び出し、最終結果 — 「Yes」または「No」 — を渡します。
 
-That outcome needs to be stored and remembered by the contract.
+その結果は、コントラクトに保存され、記憶される必要があります。
 
-### ⚖️ But Wait — Can We Trust It?
+### ⚖️ でも待って — それを信頼できるのか?
 
-The big question with any oracle is: how do we trust the data?
+どんなオラクルにも共通する大きな疑問は、「そのデータをどう信頼するのか」ということです。
 
-Therefore, several oracle solutions exist. Optimistic oracles, like UMA (used by platforms such as Polymarket), assume data is correct unless disputed. Alternatively, decentralized oracle networks like Chainlink aggregate data from multiple sources to increase reliability.
+そのため、様々なオラクルのソリューションが存在します。UMA(Polymarketのようなプラットフォームで使われている)のようなオプティミスティック・オラクルは、異議が唱えられない限りデータは正しいと仮定します。あるいは、Chainlinkのような分散型オラクルネットワークは、複数のソースからデータを集約して信頼性を高めます。
 
-But in our simplified setup, we’ll keep things lean:
+しかし、私たちのシンプルなセットアップでは、無駄をそぎ落として進めます:
 
-> 🧑‍🏫 We assume the market creator acts as the oracle and is trusted to report the outcome fairly.
+> 🧑‍🏫 市場の作成者がオラクルとして振る舞い、結果を公正に報告すると信頼されるものとします。
 
-Perfect for learning the mechanics without diving deep into oracles.
+オラクルの仕組みそのものに深入りせず、その仕組みを学ぶには最適です。
 
-### 🧱 What You’ll Implement
+### 🧱 実装すること
 
-- A `report()` function the oracle can call to finalize the outcome
+- オラクルが最終結果を確定させるために呼び出せる `report()` 関数
 
-- A variable `s_winningToken` to store the winner (Yes or No token contract) and
+- 勝者(YesまたはNoのトークンコントラクト)を保存する変数 `s_winningToken`
 
-- `s_isReported` to show whether the market has been resolved
+- 市場が解決されたかどうかを示す `s_isReported`
 
-And to keep things safe…
+そして、安全性を保つために…
 
-### 🔐 Add a Guardrail
+### 🔐 ガードレールを追加する
 
-You’ll create a custom modifier called `predictionNotReported` — this will:
+`predictionNotReported` というカスタム修飾子を作成します — これは:
 
-- 🔒 Prevent key functions from being called after the result is known
+- 🔒 結果が判明した後に、重要な関数が呼び出されるのを防ぎます
 
-- 🛡️ Ensure `report()` can only be called once
+- 🛡️ `report()` が一度しか呼び出せないようにします
 
-Think of it as a final seal — once the oracle speaks, the market locks in the outcome.
+最後の封印だと考えてください — オラクルが結果を告げた瞬間、市場はその結果に固定されます。
 
-Time to code! 💻
+コーディングの時間です!💻
 
-> 💡 When using an **enum as a parameter**, there's no way to validate it with a **custom error**. Any invalid value will cause an **immediate revert**.
+> 💡 **enumをパラメータとして使う**場合、**カスタムエラー**で検証する方法はありません。無効な値は**即座にrevert**を引き起こします。
 
-<details markdown='1'><summary>🦉 Guiding Questions</summary>
+<details markdown='1'><summary>🦉 Guiding Questions(導きの質問)</summary>
 
-<details markdown='1'><summary>Question 1</summary>
+<details markdown='1'><summary>質問1</summary>
 
-> What should be the appropriate type for s_winningToken, considering it will store a token contract address? And what is the suitable type for s_isReported?
-
-</details>
-
-<details markdown='1'><summary>Question 2</summary>
-
-> How can we ensure that only the oracle (and not necessarily the contract owner) is authorized to call the report function?
+> s_winningTokenはトークンコントラクトのアドレスを保存することを考えると、どんな型が適切でしょうか?また、s_isReportedに適した型は何でしょうか?
 
 </details>
 
-<details markdown='1'><summary>Question 3</summary>
+<details markdown='1'><summary>質問2</summary>
 
-> How do make sure that the report function can only be called when the prediction is not reported (modifier)? Which other existing functions should also use the predictionNotReported modifier?
-
-</details>
-
-<details markdown='1'><summary>Question 4</summary>
-
-> What event should be emitted when a prediction is reported?
+> オラクル(必ずしもコントラクトオーナーではない)だけがreport関数を呼び出せるようにするには、どうすればよいでしょうか?
 
 </details>
 
-After thinking through the guiding questions, have a look at the solution code!
+<details markdown='1'><summary>質問3</summary>
 
-<details markdown='1'><summary>👩🏽‍🏫 Solution Code</summary>
+> report関数が予測結果未報告のときにだけ呼び出せるようにするにはどうしますか(修飾子)?他にどの既存の関数がpredictionNotReported修飾子を使うべきでしょうか?
+
+</details>
+
+<details markdown='1'><summary>質問4</summary>
+
+> 予測結果が報告されたとき、どのイベントを発行すべきでしょうか?
+
+</details>
+
+Guiding Questionsについてよく考えた後、解答コードを見てみましょう!
+
+<details markdown='1'><summary>👩🏽‍🏫 解答コード</summary>
 
 ```javascript
 //////////////////////////
@@ -818,7 +818,7 @@ function report(Outcome _winningOutcome) external predictionNotReported {
     emit MarketReported(msg.sender, _winningOutcome, address(s_winningToken));
 }
 
-// 🔒 Don't forget to add the predictionNotReported modifier to your existing liquidity functions:
+// 🔒 既存の流動性関数にpredictionNotReported修飾子を追加するのを忘れずに:
 function addLiquidity() external payable onlyOwner predictionNotReported { ... }
 function removeLiquidity(uint256 _ethToWithdraw) external onlyOwner predictionNotReported { ... }
 ```
@@ -827,80 +827,80 @@ function removeLiquidity(uint256 _ethToWithdraw) external onlyOwner predictionNo
 
 </details>
 
-Run the following command to check if you have implemented the report function for the oracle correctly.
+以下のコマンドを実行して、オラクルのreport関数が正しく実装されているか確認してください。
 
 ```sh
 yarn test --grep "Checkpoint5"
 ```
 
-✅ Tests Passed? You’re Almost There!
+✅ テストが通りましたか?もうすぐです!
 
-Awesome job — your tests are passing, and deployment is just around the corner! 🚀
+素晴らしい — テストがパスして、デプロイまであと少しです!🚀
 
-But before you hit that deploy button, there’s one last tweak to make:
+でもデプロイボタンを押す前に、最後にもう一つ修正が必要です:
 
-👇 Scroll down to the `getPrediction()` function in your contract and…
+👇 コントラクト内の `getPrediction()` 関数までスクロールして…
 
-🧩 Uncomment everything below: `/// Checkpoint 5 ///`
+🧩 `/// Checkpoint 5 ///` より下をすべてアンコメントしてください
 
-Now head over to the oracle tab in the UI and report the outcome (after you watched the race of course:)) 🏎️ 🏁
+さあ(もちろんレースを見た後に)UIのoracleタブに行って結果を報告しましょう 🏎️ 🏁
 
-> 💡 Make sure you're connected with the correct oracle address — check `00_deploy_your_contract.ts` to find out which one is being used. (Hint: Add the first Hardhat account to your wallet or add your own account to interact as the oracle or contract owner. You can manually set your address in the deployment script or run `yarn account:import`.)
+> 💡 正しいオラクルアドレスで接続していることを確認してください — `00_deploy_your_contract.ts` を見て、どのアドレスが使われているか確認してください。(ヒント: ウォレットに最初のHardhatアカウントを追加するか、オラクルやコントラクトオーナーとしてやり取りするために自分のアカウントを追加してください。デプロイスクリプトで手動でアドレスを設定するか、`yarn account:import` を実行できます。)
 
 ![ch-6-oracle2](packages/nextjs/public/oracle2.png)
 
-## Checkpoint 6: 📉💧 Resolve market and withdraw liquidity and trading revenue
+## Checkpoint 6: 📉💧 市場を解決し、流動性と取引収益を引き出す
 
-NYou’ve wired up the oracle — nice work! 🔌 Now it’s time that the liquidity provider/market owner can **resolve the market** once the outcome has been reported.
+オラクルの配線ができましたね — お疲れ様です!🔌 次は、結果が報告された後に流動性プロバイダー/市場オーナーが**市場を解決**できるようにする番です。
 
-As the prediction market owner, you should be able to:
+予測市場のオーナーとして、あなたは次のことができるようになるべきです:
 
-- **💰 Withdraw remaining collateral** tied to the winning outcome
+- **💰 勝った結果に紐づく残りの担保を引き出す**
 
-- **📊 Collect trading fees** accumulated trading revenue
+- **📊 積み上がった取引手数料を回収する**
 
-To accomplish this, you'll implement the `resolveMarketAndWithdraw` function. Let's go!
+これを実現するために、`resolveMarketAndWithdraw` 関数を実装します。始めましょう!
 
-> 💡 You know the contract well by now — so write the logic yourself. Just don’t forget to include the necessary **conditional checks** 🔒
+> 💡 もうコントラクトのことはよく理解しているはずなので、ロジックは自分で書いてみてください。ただし、必要な**条件チェック**を忘れずに 🔒
 
-<details markdown='1'><summary>🦉 Guiding Questions</summary>
+<details markdown='1'><summary>🦉 Guiding Questions(導きの質問)</summary>
 
-<details markdown='1'><summary>Question 1</summary>
+<details markdown='1'><summary>質問1</summary>
 
-> What conditions should you check before allowing resolution?
+> 解決を許可する前に、どんな条件をチェックすべきでしょうか?
 >
-> - Has the market been reported? (Hint: It would make sense to create a modifier since we need this check afterwards again.)
-> - Does the contract hold any winning tokens?
+> - 市場は報告済みですか?(ヒント: 後でもこのチェックが必要になるので、修飾子を作ると良さそうです。)
+> - コントラクトは勝ちトークンを保有していますか?
 
 </details>
 
-<details markdown='1'><summary>Question 2</summary>
+<details markdown='1'><summary>質問2</summary>
 
-> How would you calculate the amount of ETH the prediction market owner receives from redeeming winning tokens?
-
-</details>
-
-<details markdown='1'><summary>Question 3</summary>
-
-> What should happen to the winning tokens after they're redeemed?
+> 予測市場のオーナーが勝ちトークンを償還して受け取るETHの量をどう計算しますか?
 
 </details>
 
-<details markdown='1'><summary>Question 4</summary>
+<details markdown='1'><summary>質問3</summary>
 
-> What do we need to do with s_lpTradingRevenue? Reset?
-
-</details>
-
-<details markdown='1'><summary>Question 5</summary>
-
-> What event should be emitted to indicate the market has been resolved and funds withdrawn?
+> 償還された後、勝ちトークンはどうなるべきでしょうか?
 
 </details>
 
-After thinking through the guiding questions, have a look at the solution code!
+<details markdown='1'><summary>質問4</summary>
 
-<details markdown='1'><summary>👩🏽‍🏫 Solution Code</summary>
+> s_lpTradingRevenueについて何をする必要がありますか?リセットしますか?
+
+</details>
+
+<details markdown='1'><summary>質問5</summary>
+
+> 市場が解決され、資金が引き出されたことを示すために、どのイベントを発行すべきでしょうか?
+
+</details>
+
+Guiding Questionsについてよく考えた後、解答コードを見てみましょう!
+
+<details markdown='1'><summary>👩🏽‍🏫 解答コード</summary>
 
 ```javascript
 /////////////////
@@ -952,35 +952,35 @@ function resolveMarketAndWithdraw() external onlyOwner predictionReported return
 
 </details>
 
-Run the following command to check if you have implemented the `resolveMarketAndWithdraw` function correctly.
+以下のコマンドを実行して、`resolveMarketAndWithdraw` 関数が正しく実装されているか確認してください。
 
 ```sh
 yarn test --grep "Checkpoint6"
 ```
 
-Make sure to redeploy the contract and report the outcome again using the Oracle tab.
+コントラクトを再デプロイし、Oracleタブから再度結果を報告してください。
 
-Then jump over to the Liquidity Provider tab and give your new function a try 💥
+その後、Liquidity Providerタブに移動して、新しい関数を試してみましょう 💥
 
-> 🔍 Watch closely as tokens are burned and ETH flows back to the deployer.
+> 🔍 トークンがバーンされ、ETHがデプロイヤーに戻ってくる様子をよく見てください。
 
 ![ch-6-lp3](packages/nextjs/public/lp3.png)
 
-Now that the **liquidity provider** and the **oracle** are fully implemented, it’s time to open the doors for users to jump in and **trade outcome tokens** — placing their bets and shaping the market in real time! 🛒📈
+これで**流動性プロバイダー**と**オラクル**の実装が完了したので、いよいよユーザーが**結果トークンを取引**し、賭けを行いながらリアルタイムに市場を形作っていく番です!🛒📈
 
-Ready?
+準備はいいですか?
 
-## Checkpoint 7: 📈📉 Implement pricing and probability calculations for token trades
+## Checkpoint 7: 📈📉 トークン取引の価格と確率計算を実装する
 
-You’ve built the core engine — liquidity is flowing, the oracle is reporting, and now it’s time to let users place their bets by buying and selling outcome tokens.
+コアエンジンを構築しましたね — 流動性が流れ、オラクルが報告を行い、いよいよユーザーが結果トークンを売買して賭けをできるようにする番です。
 
-Welcome to the part of the prediction market, where price meets probability, and every trade shifts the odds. Let’s make it happen! 💥
+予測市場の中でも、価格と確率が交わり、取引のたびにオッズが動くパートへようこそ。さっそくやってみましょう!💥
 
-### 🛠️ Your Goal: Enable trading
+### 🛠️ 目標: 取引を可能にする
 
-To enable users to buy and sell "Yes" or "No" tokens, we need a pricing system that reflects current market sentiment.
+ユーザーが「Yes」または「No」トークンを売買できるようにするには、現在の市場のセンチメントを反映した価格システムが必要です。
 
-You’ll start by implementing three key helper functions:
+まずは3つの重要なヘルパー関数を実装するところから始めます:
 
 - `_calculatePriceInEth`
 
@@ -988,53 +988,53 @@ You’ll start by implementing three key helper functions:
 
 - `_calculateProbability`
 
-Then finalize it with these public pricing functions:
+そして、次の公開の価格関数で仕上げます:
 
 - `getBuyPriceInEth`
 
 - `getSellPriceInEth`
 
-### 🔧 The Core Idea
+### 🔧 核となる考え方
 
-Every time a user buys or sells, we need to calculate how much ETH it costs (or earns). That’s where `_calculatePriceInEth` shines. We'll use a linear pricing model to keep things simple — but remember, this is just a starting point. You can upgrade to another model later.
+ユーザーが売買するたびに、それにいくらのETHがかかるか(または得られるか)を計算する必要があります。そこで活躍するのが `_calculatePriceInEth` です。シンプルにするため線形の価格モデルを使いますが、これはあくまで出発点であることを覚えておいてください。後で別のモデルにアップグレードすることもできます。
 
-Here’s the key formula:
+キーとなる計算式は次のとおりです:
 
 $$
 price = initialTokenValue * probabilityAvg * tradingAmount
 $$
 
-Check out the table below for how prices behave under different scenarios. Note that the prices of both outcomes always sum to **0.01 ETH**.
+様々なシナリオで価格がどう振る舞うか、下の表を確認してください。両方の結果の価格の合計は常に**0.01 ETH**になることに注意してください。
 
 ![pm-priceTable](packages/nextjs/public/priceTable.png)
 
-### 💡 How It Works
+### 💡 仕組み
 
-We'll compute the probability of an outcome before and after the trade based on how many tokens are locked. Then we average the two and multiply by the amount the user wants to buy/sell.
+ロックされているトークンの数に基づいて、取引の前後でのある結果の確率を計算します。そして、その2つを平均し、ユーザーが売買したい量を掛け合わせます。
 
-To implement `_calculatePriceInEth`, we:
+`_calculatePriceInEth` を実装するには:
 
-1. Use `_getCurrentReserves` to know how many tokens are in the contract
+1. `_getCurrentReserves` を使って、コントラクトにどれだけのトークンがあるかを知る
 
-2. Use `_calculateProbability` to figure out the chance of an outcome winning
+2. `_calculateProbability` を使って、ある結果が勝つ確率を求める
 
-3. Average the probabilities before and after the trade
+3. 取引の前後の確率を平均する
 
-4. Multiply by initialTokenValue and amount to get the price
+4. initialTokenValueと量を掛けて価格を得る
 
-### 📊 How the Price Function Works (and Its Quirks)
+### 📊 価格関数の仕組み(とその癖)
 
-This pricing model gives users a volume discount — the more you buy in one go, the better the deal. That’s the opposite of DeFi slippage, where big trades usually cost more. 😎
+この価格モデルは、ユーザーに「まとめ買い割引」を提供します — 一度に多く買うほどお得になります。これは、大きな取引ほど通常コストが高くなるDeFiのスリッページとは正反対です 😎
 
-Let’s look at a concrete example to see how this plays out.
+これがどう作用するか、具体例で見てみましょう。
 
-🚗 Setup:
+🚗 セットアップ:
 
 - totalSupplyYes = 100, totalSupplyNo = 100
 - currentReserveYes = 90, currentReserveNo = 90
 - tokenLockedYes = 10, tokenLockedNo = 10
 
-1️⃣ **One Big Trade: Buying 60 "Yes" tokens in one trade**
+1️⃣ **1回の大きな取引: 60個の「Yes」トークンを1回の取引で購入**
 
 $$
 probabilityYes = \frac{tokenSoldYes + tokenLockedYes}{tokenLockedYes+ tokenLockedNo + tokenSoldYes + tokenSoldNo}
@@ -1045,77 +1045,77 @@ $$
 - probAvg = (probBefore + probAfter) / 2 = 68.75%
 - price = 0.01 ETH * 68.75% * 60 = 0.4125 ETH
 
-**2️⃣ Two Smaller Trades: Buying 60 "Yes" tokens as two trades of 30**
+**2️⃣ 2回の小さな取引: 60個の「Yes」トークンを30個ずつ2回に分けて購入**
 
-**First trade:**
+**1回目の取引:**
 
 - probBefore = 50%, probAfter = 80%
 - probAvg = 65%
 - price = 0.01 ETH \* 65% \* 30 = 0.195 ETH
 
-**Second trade:**
+**2回目の取引:**
 
 - probBefore = 80%, probAfter = $87.5%
 - probAvg = 83.75%
 - price = 0.01 ETH \* 83.75% \* 30 = 0.2515 ETH
 
-**Total** = 0.195 + 0.25125 = **0.44625 ETH** > **0.4125 ETH**
+**合計** = 0.195 + 0.25125 = **0.44625 ETH** > **0.4125 ETH**
 
-🔺 That’s more expensive than the single trade!
+🔺 1回の取引よりも高くついています!
 
-> 🧠 **So, why do two smaller trades cost more than one big trade?**
+> 🧠 **では、なぜ2回に分けた小さな取引の方が、1回の大きな取引よりも高くつくのでしょうか?**
 >
-> This happens because we're using the **average probability** between the start and end of a trade to calculate the price. When you split a large trade into multiple smaller ones, each one recalculates its own start and end probability, resulting in **higher average probabilities overall**, in a rising market. That's why the total cost ends up being **more**.
+> これは、取引の開始時点と終了時点の**平均確率**を使って価格を計算しているために起こります。大きな取引を複数の小さな取引に分割すると、それぞれの取引が独自の開始・終了確率を再計算するため、上昇相場では**全体としての平均確率が高くなり**ます。だからこそ、合計コストは**より高く**なるのです。
 >
-> This behavior is a side-effect of using a simplified, linear approximation. If we wanted to make the pricing model **more accurate**, we could simulate the trade as a **series of infinitesimally small steps**, like how an **integral** works in calculus. That would give us a smoother, more precise cost curve for large trades, but at the expense of complexity.
+> この挙動は、シンプルな線形近似を使っていることの副作用です。価格モデルを**もっと正確に**したいなら、微積分の**積分**のように、取引を**無限に小さなステップの連続**としてシミュレートすることもできます。そうすれば、大きな取引に対してより滑らかで精緻なコスト曲線が得られますが、その分複雑さが増します。
 
-### 🛠️ Implementation Notes
+### 🛠️ 実装上の注意点
 
-Keep these key mechanics in mind while coding:
+コーディングする際は、次の重要な仕組みを覚えておいてください:
 
-- **Buying** tokens pushes the probability of that outcome up 📈
+- **購入**は、その結果の確率を押し上げます 📈
 
-- **Selling** does the opposite — it lowers the probability 📉
+- **売却**はその逆で、確率を押し下げます 📉
 
-Both getBuyPriceInEth and getSellPriceInEth are public-facing functions that simply call \_calculatePriceInEth, passing in a flag to indicate whether it’s a buy or sell action.
+getBuyPriceInEthとgetSellPriceInEthはどちらも公開関数で、単に `_calculatePriceInEth` を呼び出し、購入か売却かを示すフラグを渡すだけです。
 
-Now go wire it up! ⚡
+さあ、実装してみましょう!⚡
 
-<details markdown='1'><summary>🦉 Guiding Questions</summary>
+<details markdown='1'><summary>🦉 Guiding Questions(導きの質問)</summary>
 
-<details markdown='1'><summary>Question 1</summary>
+<details markdown='1'><summary>質問1</summary>
 
-> How do you ensure _getCurrentReserves returns the correct values based on _outcome? (Hint: Think about how to distinguish between the selected outcome when fetching reserves)
-
-</details>
-
-<details markdown='1'><summary>Question 2</summary>
-
-> What check should you add to avoid underflow when selling tokens? (Hint: Ensure the user isn't selling more tokens than are available in reserves.)
+> _getCurrentReservesが_outcomeに基づいて正しい値を返すようにするにはどうしますか?(ヒント: リザーブを取得する際に、選択された結果をどう区別するか考えてみましょう)
 
 </details>
 
-<details markdown='1'><summary>Question 3</summary>
+<details markdown='1'><summary>質問2</summary>
 
-> How do we compute probabilityBefore, probabilityAfter, and probabilityAvg? (Hint: See the example above.)
-
-</details>
-
-<details markdown='1'><summary>Question 4</summary>
-
-> What else should you keep in mind when calculating price? (Hint: Don't forget about decimals and PRECISION constant.)
+> トークンを売却する際にアンダーフローを避けるために、どんなチェックを追加すべきでしょうか?(ヒント: ユーザーがリザーブにある量より多くのトークンを売却しようとしていないか確認してください。)
 
 </details>
 
-<details markdown='1'><summary>Question 5</summary>
+<details markdown='1'><summary>質問3</summary>
 
-> Which function needs to be called inside getBuyPriceInEth and getSellPriceInEth? What is different between these two?
+> probabilityBefore、probabilityAfter、probabilityAvgをどう計算しますか?(ヒント: 上の例を参照してください。)
 
 </details>
 
-After thinking through the guiding questions, have a look at the solution code!
+<details markdown='1'><summary>質問4</summary>
 
-<details markdown='1'><summary>👩🏽‍🏫 Solution Code</summary>
+> 価格を計算する際、他に何を気をつけるべきでしょうか?(ヒント: 小数とPRECISION定数を忘れずに。)
+
+</details>
+
+<details markdown='1'><summary>質問5</summary>
+
+> getBuyPriceInEthとgetSellPriceInEthの内部では、どの関数を呼び出す必要がありますか?この2つの違いは何ですか?
+
+</details>
+
+Guiding Questionsについてよく考えた後、解答コードを見てみましょう!
+
+<details markdown='1'><summary>👩🏽‍🏫 解答コード</summary>
 
 ```javascript
 /////////////////
@@ -1194,111 +1194,111 @@ function _calculateProbability(uint256 tokensSold, uint256 totalSold) private pu
 
 </details>
 
-Run the following command to check if you have implemented all the functions correctly.
+以下のコマンドを実行して、すべての関数が正しく実装されているか確認してください。
 
 ```sh
 yarn test --grep "Checkpoint7"
 ```
 
-## Checkpoint 8: 🔁💰 Buy and sell "Yes" or "No" Tokens for ETH
+## Checkpoint 8: 🔁💰 「Yes」または「No」トークンをETHで売買する
 
-Now that you've built the pricing engine (`getBuyPriceInEth` / `getSellPriceInEth`), it’s time to bring the market to life with real trades! Let’s implement two key functions:
+価格エンジン(`getBuyPriceInEth` / `getSellPriceInEth`)を構築できたので、いよいよ実際の取引で市場に命を吹き込みましょう!次の2つの重要な関数を実装します:
 
 - `buyTokensWithETH`
 
 - `sellTokensForEth`
 
-### 🛒 Buying Tokens
+### 🛒 トークンの購入
 
-Before a user can grab some "Yes" or "No" tokens, we need to run a few sanity checks:
+ユーザーが「Yes」や「No」のトークンを手に入れる前に、いくつかの健全性チェックを行う必要があります:
 
-- ✅ Is the market still active?
-- ✅ Is the token amount greater than zero? (Tip: a modifier can enforce this!)
-- ✅ Does the contract have enough tokens to sell?
-- ✅ Does the ETH sent match the exact price from `getBuyPriceInEth`?
-- ✅ Is the caller not the market owner?
+- ✅ 市場はまだアクティブか?
+- ✅ トークンの量は0より大きいか?(ヒント: 修飾子で強制できます!)
+- ✅ コントラクトは売るのに十分なトークンを持っているか?
+- ✅ 送られたETHは `getBuyPriceInEth` から得られる正確な価格と一致しているか?
+- ✅ 呼び出し元は市場オーナーではないか?
 
-Once everything checks out, update the trading revenue (`s_lpTradingRevenue`), and send the outcome tokens to the buyer. Easy win!
+すべてのチェックをクリアしたら、取引収益(`s_lpTradingRevenue`)を更新し、結果トークンを購入者に送ります。簡単ですね!
 
-### 💸 Selling Tokens
+### 💸 トークンの売却
 
-Now let’s handle users who want to cash out (it follows a similar process but in reverse).
+次は、現金化したいユーザーを扱います(似たようなプロセスですが逆方向です)。
 
-Here’s what we additionally check:
+追加で以下をチェックします:
 
-- ✅ Is the token amount valid?
-- ✅ Does the contract have enough ETH to pay out?
-- ✅ Has the user approved the contract to transfer their tokens?
+- ✅ トークンの量は有効か?
+- ✅ コントラクトは支払うのに十分なETHを持っているか?
+- ✅ ユーザーはコントラクトにトークンの転送を承認しているか?
 
-Use `getSellPriceInEth` to calculate the ETH owed. Then:
+`getSellPriceInEth` を使って支払うべきETHを計算します。そして:
 
-1. Deduct the ETH from `s_lpTradingRevenue`
+1. `s_lpTradingRevenue` からETHを差し引く
 
-2. Transfer it to the seller
+2. それを売却者に転送する
 
-3. And don’t forget to emit events to keep things transparent on-chain 📢
+3. オンチェーンでの透明性を保つため、イベントの発行を忘れずに 📢
 
-Let's go and enable real-time trading! 🔥
+さあ、リアルタイム取引を実現させましょう!🔥
 
-<details markdown='1'><summary>🦉 Guiding Questions</summary>
+<details markdown='1'><summary>🦉 Guiding Questions(導きの質問)</summary>
 
-<details markdown='1'><summary>Question 1</summary>
+<details markdown='1'><summary>質問1</summary>
 
-> How do we ensure the trading amount is not zero? (Hint: create a modifier, have a look at the custom errors available) And the the prediction market is not reported yet?
-
-</details>
-
-<details markdown='1'><summary>Question 2</summary>
-
-> How can we verify that the correct amount of ETH is sent to the contract for the intended number of tokens? (Hint: think of a function we implemented earlier.)
+> 取引量が0でないことをどう確認しますか?(ヒント: 修飾子を作り、利用可能なカスタムエラーを見てみましょう)そして予測市場がまだ報告されていないことは?
 
 </details>
 
-<details markdown='1'><summary>Question 3</summary>
+<details markdown='1'><summary>質問2</summary>
 
-> How do we check if the contract holds enough tokens for a purchase?
-
-</details>
-
-<details markdown='1'><summary>Question 4</summary>
-
-> What value should be added to the s_lpTradingRevenue state variable during a purchase?
+> 意図したトークン数に対して、正しい量のETHがコントラクトに送られたことをどう検証しますか?(ヒント: 以前実装した関数を思い出してください。)
 
 </details>
 
-<details markdown='1'><summary>Question 5</summary>
+<details markdown='1'><summary>質問3</summary>
 
-> How do we ensure the contract checks for token allowance when a user wants to sell? (Hint: the check should only verify allowance, not set it. That needs to be done in a separate transaction.)
-
-</details>
-
-<details markdown='1'><summary>Question 6</summary>
-
-> How do we calculate the correct amount of ETH to send back to the user? (Hint: recall the helper function we implemented earlier.)
+> コントラクトが購入に十分なトークンを保有しているかをどうチェックしますか?
 
 </details>
 
-<details markdown='1'><summary>Question 7</summary>
+<details markdown='1'><summary>質問4</summary>
 
-> What value should be subtracted from s_lpTradingRevenue during a sell?
-
-</details>
-
-<details markdown='1'><summary>Question 8</summary>
-
-> How do we ensure the _tradingAmount is sent to the user?
+> 購入の際、s_lpTradingRevenue状態変数にはどんな値を加算すべきでしょうか?
 
 </details>
 
-<details markdown='1'><summary>Question 9</summary>
+<details markdown='1'><summary>質問5</summary>
 
-> Which Events need to be emitted in these functions (have a look into the Events section and pick the correct ones?
+> ユーザーが売却したいとき、コントラクトがトークンの許可(allowance)をチェックするにはどうすればよいでしょうか?(ヒント: このチェックは許可を確認するだけであるべきで、設定はしません。それは別のトランザクションで行う必要があります。)
 
 </details>
 
-After thinking through the guiding questions, have a look at the solution code!
+<details markdown='1'><summary>質問6</summary>
 
-<details markdown='1'><summary>👩🏽‍🏫 Solution Code</summary>
+> ユーザーに送り返す正しいETH量をどう計算しますか?(ヒント: 以前実装したヘルパー関数を思い出してください。)
+
+</details>
+
+<details markdown='1'><summary>質問7</summary>
+
+> 売却の際、s_lpTradingRevenueからは何を差し引くべきでしょうか?
+
+</details>
+
+<details markdown='1'><summary>質問8</summary>
+
+> _tradingAmountがユーザーに送られることをどう保証しますか?
+
+</details>
+
+<details markdown='1'><summary>質問9</summary>
+
+> これらの関数ではどのイベントを発行する必要がありますか(Eventsセクションを見て、正しいものを選んでください)?
+
+</details>
+
+Guiding Questionsについてよく考えた後、解答コードを見てみましょう!
+
+<details markdown='1'><summary>👩🏽‍🏫 解答コード</summary>
 
 ```javascript
 /////////////////
@@ -1393,80 +1393,80 @@ function sellTokensForEth(Outcome _outcome, uint256 _tradingAmount)
 
 </details>
 
-Run the following command to check if you have implemented all the functions correctly.
+以下のコマンドを実行して、すべての関数が正しく実装されているか確認してください。
 
 ```sh
 yarn test --grep "Checkpoint8"
 ```
 
-And then run `yarn deploy` to test it in the front-end and see how the probability changes.
+そして `yarn deploy` を実行し、フロントエンドで動作を確認し、確率がどう変化するか見てみましょう。
 
-> ❗️💡 Make sure you **use another account as the liquidity provider**, otherwise you are **restricted from selling the tokens**
+> ❗️💡 **流動性プロバイダーとは別のアカウントを使う**ようにしてください。そうしないと**トークンの売却が制限されます**
 
 ![ch-6-user2](packages/nextjs/public/user2.png)
 
-## Checkpoint 9: Redeem winning tokens as a user
+## Checkpoint 9: ユーザーとして勝ちトークンを償還する
 
-You’ve made your bet… the race is over… and you were right. Now it’s time to cash in! 🎉
-The last user-facing function to implement is redeemWinningTokens, which lets users who backed the correct outcome **redeem each winning token for 0.01 ETH**.
+賭けをして…レースが終わり…そしてあなたの予想が当たりました。さあ、換金の時間です!🎉
+最後に実装するユーザー向け関数は redeemWinningTokens で、正しい結果に賭けたユーザーが**各勝ちトークンを0.01 ETHと交換**できるようにするものです。
 
-### ✅ Redemption Checklist
+### ✅ 償還チェックリスト
 
-Before we hand out any rewards, we need to verify a few things:
+報酬を配る前に、いくつか確認すべきことがあります:
 
-- 🟢 Has the market been resolved?
+- 🟢 市場は解決済みですか?
 
-- 🪙 Does the user hold any winning tokens?
+- 🪙 ユーザーは勝ちトークンを保有していますか?
 
-- 💰 Is there actually something to redeem?
+- 💰 実際に償還できるものがありますか?
 
-- 🚫 Is the caller not the market owner?
+- 🚫 呼び出し元は市場オーナーではありませんか?
 
-### 💸 Payout Logic
+### 💸 支払いロジック
 
-If everything checks out, we:
+すべてのチェックをクリアしたら、次のことを行います:
 
-1. Calculate the user's total ETH payout
+1. ユーザーの合計ETH支払い額を計算する
 
-2. Subtract that amount from `s_ethCollateral`
+2. その額を `s_ethCollateral` から差し引く
 
-3. Burn the winning tokens (they’ve served their purpose) 🔥
+3. 勝ちトークンをバーンする(役目を終えたので)🔥
 
-4. Transfer the ETH straight to the user’s wallet
+4. ETHをユーザーのウォレットに直接転送する
 
-5. Emit an event to log the redemption on-chain
+5. 償還をオンチェーンに記録するためイベントを発行する
 
-This is the final step for users — the payoff moment where good predictions get rewarded.
+これがユーザーにとっての最終ステップです — 良い予測が報われる、まさに払い戻しの瞬間です。
 
-<details markdown='1'><summary>🦉 Guiding Questions</summary>
+<details markdown='1'><summary>🦉 Guiding Questions(導きの質問)</summary>
 
-<details markdown='1'><summary>Question 1</summary>
+<details markdown='1'><summary>質問1</summary>
 
-> Is the prediction market already reported (Hint: modifier)? Does the user have any winning tokens? Is the amount he wants to redeem greater than 0 (Hint: modifier)?
-
-</details>
-
-<details markdown='1'><summary>Question 2</summary>
-
-> How do you calculate how much ETH the user receives?
+> 予測市場はすでに報告済みですか(ヒント: 修飾子)?ユーザーは勝ちトークンを持っていますか?償還したい量は0より大きいですか(ヒント: 修飾子)?
 
 </details>
 
-<details markdown='1'><summary>Question 3</summary>
+<details markdown='1'><summary>質問2</summary>
 
-> What do you do with the winning tokens redeemed by the user?
-
-</details>
-
-<details markdown='1'><summary>Question 4</summary>
-
-> Which events need to be emitted?
+> ユーザーが受け取るETHの量をどう計算しますか?
 
 </details>
 
-After thinking through the guiding questions, have a look at the solution code!
+<details markdown='1'><summary>質問3</summary>
 
-<details markdown='1'><summary>👩🏽‍🏫 Solution Code</summary>
+> ユーザーが償還した勝ちトークンはどうしますか?
+
+</details>
+
+<details markdown='1'><summary>質問4</summary>
+
+> どのイベントを発行する必要がありますか?
+
+</details>
+
+Guiding Questionsについてよく考えた後、解答コードを見てみましょう!
+
+<details markdown='1'><summary>👩🏽‍🏫 解答コード</summary>
 
 ```javascript
 /////////////////
@@ -1498,135 +1498,135 @@ function redeemWinningTokens(uint256 _amount) external amountGreaterThanZero(_am
 
 </details>
 
-Run the following command to check if you have implemented the last function for this challenge correctly.
+以下のコマンドを実行して、このチャレンジ最後の関数が正しく実装されているか確認してください。
 
 ```sh
 yarn test --grep "Checkpoint9"
 ```
 
-Then run `yarn deploy` to test it on the front-end. Make sure to purchase some winning tokens beforehand and report the race. After that, you should be able to redeem your desired amount.
+その後 `yarn deploy` を実行してフロントエンドで試してみましょう。事前にいくつか勝ちトークンを購入し、レースの結果を報告しておいてください。それが終われば、好きな量を償還できるはずです。
 
 ![ch-6-user3](packages/nextjs/public/user3.png)
 
-Congratulations you finished successfully the implementation 🎉🎉🎉
+おめでとうございます、実装を無事に完了しました 🎉🎉🎉
 
-## Checkpoint 10: 💾 Deploy your contracts! 🛰
+## Checkpoint 10: 💾 コントラクトをデプロイしよう! 🛰
 
-📡 Edit the \`defaultNetwork\` to [your choice of **Sepolia or Optimism Sepolia** in \`packages/hardhat/hardhat.config.ts\`
+📡 `packages/hardhat/hardhat.config.ts` の `defaultNetwork` を、**SepoliaまたはOptimism Sepolia**のお好きな方に編集してください
 
-🔐 You will need to generate a **deployer address** using `yarn generate` This creates a mnemonic and saves it locally.
+🔐 `yarn generate` を使って**デプロイヤーアドレス**を生成する必要があります。これによりニーモニックが作成され、ローカルに保存されます。
 
-👩‍🚀 Use `yarn account` to view your deployer account balances.
+👩‍🚀 `yarn account` を使って、デプロイヤーアカウントの残高を確認できます。
 
-⛽️ You will need to send ETH to your **deployer address** with your wallet, or obtain it from a public faucet of your chosen network.
+⛽️ 自分のウォレットから**デプロイヤーアドレス**にETHを送るか、選んだネットワークのパブリックフォーセットから入手する必要があります。
 
-> 🚨🚨 **!!!Warning!!!** Before deploying, make sure to adjust the ETH amount in the constructor to suit your preferences. By default, the contract deploys with **1 ETH** and sets the token value to **0.01 ETH**. You might want to change this, for example, to **0.1 ETH** and **0.001 ETH,** depending on how much ETH you're willing to allocate. 🚨🚨
+> 🚨🚨 **!!!警告!!!** デプロイする前に、必ずコンストラクタのETH量を自分の好みに合わせて調整してください。デフォルトでは、コントラクトは**1 ETH**でデプロイされ、トークン価値は**0.01 ETH**に設定されています。どれだけのETHを割り当てたいかに応じて、例えば**0.1 ETH**と**0.001 ETH**に変更したくなるかもしれません。🚨🚨
 
-🚀 Run \`yarn deploy\` to deploy your smart contract to a public network (selected in \`hardhat.config.ts\`)
+🚀 `yarn deploy` を実行して、スマートコントラクトを(`hardhat.config.ts` で選択した)パブリックネットワークにデプロイしてください
 
-> 💬 Hint: You can set the \`defaultNetwork\` in \`hardhat.config.ts\` to \`sepolia\` or \`optimismSepolia\` OR you can \`yarn deploy --network sepolia\` or \`yarn deploy --network optimismSepolia\`.
+> 💬 ヒント: `hardhat.config.ts` の `defaultNetwork` を `sepolia` や `optimismSepolia` に設定するか、`yarn deploy --network sepolia` または `yarn deploy --network optimismSepolia` を実行することもできます。
 
-💻 View your front-end at [http://localhost:3000](http://localhost:3000/) and verify you see the correct network.
+💻 [http://localhost:3000](http://localhost:3000/) でフロントエンドを確認し、正しいネットワークが表示されていることを確認してください。
 
-📦 Run `yarn vercel` to package up your front-end and deploy.
+📦 `yarn vercel` を実行して、フロントエンドをパッケージ化しデプロイしてください。
 
-> You might need to log in to Vercel first by running yarn vercel:login. Once you log in (via email, GitHub, etc.), the default options should work.
+> まず `yarn vercel:login` を実行してVercelにログインする必要があるかもしれません。(メール、GitHubなどで)ログインすれば、デフォルトのオプションで動作するはずです。
 
-> If you want to redeploy to the same production URL you can run `yarn vercel --prod`. If you omit the `--prod` flag it will deploy it to a preview/test URL.
+> 同じ本番URLに再デプロイしたい場合は `yarn vercel --prod` を実行してください。`--prod` フラグを省略すると、プレビュー/テスト用URLにデプロイされます。
 
-> Follow the steps to deploy to Vercel. It'll give you a public URL.
+> Vercelへのデプロイ手順に従ってください。公開URLが発行されます。
 
-> 🦊 Since we have deployed to a public testnet, you will now need to connect using a wallet you own or use a burner wallet. By default 🔥 burner wallets are only available on localhost. You can enable them on every chain by setting burnerWalletMode: "allNetworks" in your front-end config (scaffold.config.ts in packages/nextjs/)
+> 🦊 パブリックなテストネットにデプロイしたので、自分が所有するウォレットかバーナーウォレットを使って接続する必要があります。デフォルトでは 🔥 バーナーウォレットはlocalhostでのみ利用可能です。フロントエンド設定(`packages/nextjs/` の `scaffold.config.ts`)で `burnerWalletMode: "allNetworks"` を設定すれば、すべてのチェーンで有効化できます
 
-**Configuration of Third-Party Services for Production-Grade Apps.**
+**本番グレードのアプリのためのサードパーティサービス設定。**
 
-By default, 🏗 Scaffold-ETH 2 provides predefined API keys for popular services such as Alchemy and Etherscan. This allows you to begin developing and testing your applications more easily, avoiding the need to register for these services. This is great to complete your **Speedrun Ethereum**.
+デフォルトでは、🏗 Scaffold-ETH 2はAlchemyやEtherscanといった人気サービス向けの既定のAPIキーを提供しています。これにより、これらのサービスに登録する手間なく、より簡単にアプリケーションの開発とテストを始められます。**Speedrun Ethereum**を完了するにはこれで十分です。
 
-For production-grade applications, it's recommended to obtain your own API keys (to prevent rate limiting issues). You can configure these at:
+本番グレードのアプリケーションでは、(レート制限の問題を避けるため)自分自身のAPIキーを取得することをおすすめします。以下で設定できます:
 
-- 🔷 `ALCHEMY_API_KEY` variable in `packages/hardhat/.env` and `packages/nextjs/.env.local`. You can create API keys from the [Alchemy dashboard](https://dashboard.alchemy.com/).
-- 📃 `ETHERSCAN_API_KEY` variable in `packages/hardhat/.env` with your generated API key. You can get your key [here](https://etherscan.io/myapikey).
+- 🔷 `packages/hardhat/.env` と `packages/nextjs/.env.local` の `ALCHEMY_API_KEY` 変数。[Alchemyダッシュボード](https://dashboard.alchemy.com/) からAPIキーを作成できます。
+- 📃 `packages/hardhat/.env` の `ETHERSCAN_API_KEY` 変数に、生成したAPIキーを設定します。キーは[こちら](https://etherscan.io/myapikey)から取得できます。
 
-> 💬 Hint: It's recommended to store envs for nextjs in Vercel/system env config for live apps and use .env.local for local testing.
+> 💬 ヒント: 本番運用中のアプリでは、nextjs用の環境変数はVercel/システムの環境設定に保存し、ローカルテストでは .env.local を使うことをおすすめします。
 
-## Checkpoint 11: 📜 Contract Verification
+## Checkpoint 11: 📜 コントラクトの検証
 
-Run the `yarn verify --network your_network` command to verify if your contracts are on etherscan 🛰
+`yarn verify --network your_network` コマンドを実行して、コントラクトがetherscanに登録されているか確認しましょう 🛰
 
-👉 Search this address on [Sepolia Etherscan](https://sepolia.etherscan.io/) (or [Optimism Sepolia Etherscan](https://sepolia-optimism.etherscan.io/) if you deployed to OP Sepolia) to get the URL you submit to 🏃‍♀️[SpeedRunEthereum.com](https://speedrunethereum.com/).
+👉 [SpeedRunEthereum.com](https://speedrunethereum.com/) に提出するURLを取得するには、[Sepolia Etherscan](https://sepolia.etherscan.io/)(OP Sepoliaにデプロイした場合は[Optimism Sepolia Etherscan](https://sepolia-optimism.etherscan.io/))でこのアドレスを検索してください 🏃‍♀️
 
-## Checkpoint 12: 🧠 🍔 Final consideration and food for thought
+## Checkpoint 12: 🧠 🍔 最後に考えてみよう
 
-You made it — all the way to the finish line! 🏁💥
+ついにここまで来ましたね — ゴールです!🏁💥
 
-By now, you've built a full-blown, on-chain prediction market from scratch. That’s a huge achievement. But before you walk away feeling like Vitalik at Devcon, here are a few final considerations to level up your build from a solid prototype to production-ready protocol.
+ここまでで、あなたはオンチェーンの予測市場をゼロからフルスクラッチで構築しました。これは大きな達成です。でも、Devconに参加したVitalikのような気分になって立ち去る前に、しっかりしたプロトタイプから本番運用可能なプロトコルへとレベルアップするための、最後の考察をいくつか紹介します。
 
-**🔐 Add a Deadline**
-Markets need finality. Introduce a time-based condition that locks trading or triggers resolution after a set date.
+**🔐 期限を追加する**
+市場には最終性が必要です。設定した日付を過ぎたら取引をロックする、あるいは解決をトリガーする時間ベースの条件を導入しましょう。
 
-**🔮 Upgrade Your Oracle**
-Right now, you’re probably using a simple centralized oracle. That’s fine for testing, but in the real world, trust minimization matters. Explore ways to make your outcome reporting more decentralized or cryptoeconomically secure.
+**🔮 オラクルをアップグレードする**
+今のところ、おそらくシンプルな中央集権型のオラクルを使っているはずです。テストにはそれで十分ですが、実世界では信頼の最小化が重要です。結果の報告をより分散化する、あるいは暗号経済的により安全にする方法を探ってみましょう。
 
-**🧱 Rethink Token Locking**
-Do you really need to pre-lock all those tokens? Consider smarter mechanisms like virtual trades, simulating initial positions, or innovative liquidity bootstrapping methods. Be creative — the system is yours to bend.
+**🧱 トークンロックを見直す**
+本当にすべてのトークンを事前にロックする必要があるでしょうか?バーチャルトレード、初期ポジションのシミュレーション、革新的な流動性ブートストラップ手法など、もっと賢い仕組みを検討してみてください。創造的に — このシステムはあなたが自由に作り変えられるものです。
 
-**💸 Reward the LPs**
-Add trading fees (e.g., 3% per trade) and send that ETH to `s_lpTradingRevenue`. It’s a simple way to reward liquidity providers and build a more sustainable market.
+**💸 LPに報酬を与える**
+取引手数料(例: 1取引あたり3%)を追加し、そのETHを `s_lpTradingRevenue` に送りましょう。流動性プロバイダーに報いて、より持続可能な市場を作るためのシンプルな方法です。
 
-**🧠 Explore alternative market designs**
-The linear pricing model you’ve used is just one of many. You could replace it entirely — try building an order book, or even explore dynamic pricing with AI agents. The canvas is wide open.
+**🧠 他の市場設計を探る**
+これまで使ってきた線形の価格モデルは、数ある選択肢の一つに過ぎません。オーダーブックを構築したり、AIエージェントによる動的な価格設定を探求したりと、まるごと置き換えることもできます。可能性は無限に開かれています。
 
-### ⚠️ LPs Can Lose Money — Let’s Look at Why
+### ⚠️ LPはお金を失うこともある — その理由を見てみよう
 
-One important risk we haven't explicitly mentioned: as a market creator, **you can lose money**. Here's a worst-case example based on the current model with the following initial parameters:
-
----
-
-### ⛔️ Case 1: One user buys 90 "Yes" tokens and "Yes" wins
-
-- Final probability = (90 + 10) / (10 + 10 + 90 + 0) = **90.9%**
-- Average probability = (50% + 90.9%) / 2 = **70.45%**
-- User buys 90 tokens → **0.01 ETH × 70.45% × 90 = 0.637 ETH**
-- User wins: **0.01 ETH × 90 = 0.9 ETH → 41% profit**
-- LP gains from 10 "Yes" tokens = **0.1 ETH**, plus 0.637 ETH from trade
-- LP total: **0.1 + 0.637 - 1 = -0.263 ETH** → **~26% loss**
+明示的には触れていない重要なリスクが一つあります: 市場作成者として、**あなたはお金を失う可能性がある**ということです。以下は、次の初期パラメータに基づく現行モデルでの最悪ケースの例です:
 
 ---
 
-### ✅ Case 2: Same trade, but "No" wins
+### ⛔️ ケース1: あるユーザーが「Yes」トークンを90個購入し、「Yes」が勝つ場合
 
-- User loses: 0.637 ETH
-- LP gains from 100 "No" tokens = **1 ETH**, plus 0.637 ETH from trade
-- LP total: **1 + 0.637 - 1 = 0.637 ETH** → **~64% profit**
+- 最終確率 = (90 + 10) / (10 + 10 + 90 + 0) = **90.9%**
+- 平均確率 = (50% + 90.9%) / 2 = **70.45%**
+- ユーザーが90トークンを購入 → **0.01 ETH × 70.45% × 90 = 0.637 ETH**
+- ユーザーの勝利: **0.01 ETH × 90 = 0.9 ETH → 41%の利益**
+- LPは10個の「Yes」トークンから **0.1 ETH**、さらに取引から0.637 ETHを得る
+- LP合計: **0.1 + 0.637 - 1 = -0.263 ETH** → **約26%の損失**
 
 ---
 
-Keep in mind that if you start with a skewed probability (e.g., 10%), losses in Case 1 can be even higher. Setting the right parameters comes with experience and depends heavily on your goals.
+### ✅ ケース2: 同じ取引だが、「No」が勝つ場合
 
-### 🚀 Where You Go From Here
+- ユーザーの損失: 0.637 ETH
+- LPは100個の「No」トークンから **1 ETH**、さらに取引から0.637 ETHを得る
+- LP合計: **1 + 0.637 - 1 = 0.637 ETH** → **約64%の利益**
 
-You now understand the core mechanics of prediction markets:
+---
 
-- ✔ Trading
-- ✔ Pricing
-- ✔ Liquidity
-- ✔ Market resolution
-- ✔ Redemption
+最初から偏った確率(例えば10%)でスタートした場合、ケース1での損失はさらに大きくなり得ることを覚えておいてください。適切なパラメータの設定は経験を通して身につくもので、あなたの目標に大きく左右されます。
 
-But what makes this space exciting is that there’s no “one-size-fits-all” design. Your challenge now is to push the limits — explore new models, mix in novel incentive designs, or even bring AI into the loop. 🤖
+### 🚀 ここからどこへ向かうか
 
-We’d love to see what you build next. Share your ideas, your forks, your experiments. This is just the beginning. 💥
+あなたは予測市場の中核となる仕組みを理解しました:
 
-What will your prediction market look like? Let us know! 🧪🔮
+- ✔ 取引
+- ✔ 価格設定
+- ✔ 流動性
+- ✔ 市場の解決
+- ✔ 償還
 
-## Documentation
+しかし、この分野が面白いのは、「これが唯一の正解」という設計が存在しないという点です。ここからのあなたの課題は、限界を押し広げることです — 新しいモデルを探求したり、斬新なインセンティブ設計を組み合わせたり、あるいはAIをループに組み込んだりしてみましょう。🤖
 
-Visit our [docs](https://docs.scaffoldeth.io) to learn how to start building with Scaffold-ETH 2.
+あなたが次に何を作るのか、ぜひ見せてください。アイデアも、フォークも、実験も共有してください。これはまだ始まりに過ぎません。💥
 
-To know more about its features, check out our [website](https://scaffoldeth.io).
+あなたの予測市場はどんな姿になるでしょうか?ぜひ教えてください!🧪🔮
 
-## Contributing to Scaffold-ETH 2
+## ドキュメント
 
-We welcome contributions to Scaffold-ETH 2!
+Scaffold-ETH 2での開発を始める方法については、[ドキュメント](https://docs.scaffoldeth.io) をご覧ください。
 
-Please see [CONTRIBUTING.MD](https://github.com/scaffold-eth/scaffold-eth-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-ETH 2.
+機能についてさらに詳しく知りたい方は、[ウェブサイト](https://scaffoldeth.io) をチェックしてください。
+
+## Scaffold-ETH 2への貢献
+
+Scaffold-ETH 2への貢献を歓迎します!
+
+貢献のための詳細情報とガイドラインについては、[CONTRIBUTING.MD](https://github.com/scaffold-eth/scaffold-eth-2/blob/main/CONTRIBUTING.md) をご覧ください。

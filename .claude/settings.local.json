@@ -1,4 +1,21 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p /Users/harukikondo/git/Prediction-Market-Sample/.challenge-ai && ls -la /Users/harukikondo/git/Prediction-Market-Sample/.challenge-ai && date -u +\"%Y-%m-%dT%H:%M:%SZ\")",
+      "Bash(git -C /Users/harukikondo/git/Prediction-Market-Sample show HEAD:.mcp.json)",
+      "Bash(claude mcp *)",
+      "mcp__serena__initial_instructions",
+      "mcp__serena__onboarding",
+      "mcp__serena__list_memories",
+      "mcp__serena__read_memory",
+      "mcp__serena__get_symbols_overview",
+      "mcp__serena__write_memory",
+      "Bash(python3 *)"
+    ],
+    "additionalDirectories": [
+      "/Users/harukikondo/git/Prediction-Market-Sample"
+    ]
+  },
   "allowedTools": [
     "Write(.challenge-ai/**)",
     "Edit(.challenge-ai/**)"

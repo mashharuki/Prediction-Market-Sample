@@ -1,5 +1,9 @@
 # AGENTS.md
 
+## ETH SKILLS
+
+Read https://ethskills.com/SKILL.md and follow it before writing Solidity or shipping anything onchain.
+
 ## What is Speedrun Ethereum?
 
 [Speedrun Ethereum](https://speedrunethereum.com/) is a hands-on learning platform where developers learn Solidity and Ethereum development by building real dApps through progressive challenges. Instead of passive tutorials, each challenge teaches a key concept: from tokens and crowdfunding to DEXs, oracles, lending, and zero-knowledge proofs. All challenges use Scaffold-ETH 2 as the development framework. Completed challenges become public portfolio items.

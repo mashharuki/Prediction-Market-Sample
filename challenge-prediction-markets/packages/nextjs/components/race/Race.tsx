@@ -12,8 +12,8 @@ import { useRaceStore } from "~~/services/store/raceStore";
 const RaceTrack: React.FC = () => {
   const { resolvedTheme } = useTheme();
 
-  // Race configuration
-  const RACE_DURATION = 30; // Duration in seconds
+  // レース設定
+  const RACE_DURATION = 30; // 秒単位の長さ
 
   const {
     raceStarted,
@@ -33,12 +33,12 @@ const RaceTrack: React.FC = () => {
 
   const raceInterval = useRef<NodeJS.Timeout | null>(null);
 
-  // Start the race with a fixed duration
+  // 固定の長さでレースを開始する
   const startRace = () => {
     if (raceStarted || raceFinished) {
       resetRace();
 
-      // Wait 1 second before starting a new race
+      // 新しいレースを開始する前に1秒待つ
       setTimeout(() => {
         const newStartTime = Date.now();
         setStartTime(newStartTime);
@@ -48,17 +48,17 @@ const RaceTrack: React.FC = () => {
         });
         setRaceStarted(true);
 
-        // Clear any existing interval
+        // 既存のintervalがあればクリアする
         if (raceInterval.current) {
           clearInterval(raceInterval.current);
         }
 
-        // Start new interval
+        // 新しいintervalを開始する
         raceInterval.current = setInterval(() => {
-          const currentTime = (Date.now() - newStartTime) / 1000; // seconds elapsed
+          const currentTime = (Date.now() - newStartTime) / 1000; // 経過秒数
 
           if (currentTime >= RACE_DURATION) {
-            // At race end, set final positions
+            // レース終了時、最終位置を設定する
             setElapsedTime(RACE_DURATION);
             setCars([
               { id: 1, position: carSpeeds[0] * RACE_DURATION, lane: 0, color: "#2ecc71" },
@@ -68,14 +68,14 @@ const RaceTrack: React.FC = () => {
             if (raceInterval.current) clearInterval(raceInterval.current);
           } else {
             setElapsedTime(currentTime);
-            // Update positions based on random speeds
+            // ランダムな速度に基づいて位置を更新する
             setCars([
               { id: 1, position: carSpeeds[0] * currentTime, lane: 0, color: "#2ecc71" },
               { id: 2, position: carSpeeds[1] * currentTime, lane: 1, color: "#e74c3c" },
             ]);
           }
-        }, 100); // update every 100ms
-      }, 1000); // 1 second delay before starting the new race
+        }, 100); // 100msごとに更新する
+      }, 1000); // 新しいレース開始前に1秒の遅延を入れる
 
       return;
     }
@@ -88,17 +88,17 @@ const RaceTrack: React.FC = () => {
     setStartTime(newStartTime);
     setRaceStarted(true);
 
-    // Clear any existing interval
+    // 既存のintervalがあればクリアする
     if (raceInterval.current) {
       clearInterval(raceInterval.current);
     }
 
-    // Start new interval
+    // 新しいintervalを開始する
     raceInterval.current = setInterval(() => {
-      const currentTime = (Date.now() - newStartTime) / 1000; // seconds elapsed
+      const currentTime = (Date.now() - newStartTime) / 1000; // 経過秒数
 
       if (currentTime >= RACE_DURATION) {
-        // At race end, set final positions
+        // レース終了時、最終位置を設定する
         setElapsedTime(RACE_DURATION);
         setCars([
           { id: 1, position: carSpeeds[0] * RACE_DURATION, lane: 0, color: "#2ecc71" },
@@ -108,40 +108,40 @@ const RaceTrack: React.FC = () => {
         if (raceInterval.current) clearInterval(raceInterval.current);
       } else {
         setElapsedTime(currentTime);
-        // Update positions based on random speeds
+        // ランダムな速度に基づいて位置を更新する
         setCars([
           { id: 1, position: carSpeeds[0] * currentTime, lane: 0, color: "#2ecc71" },
           { id: 2, position: carSpeeds[1] * currentTime, lane: 1, color: "#e74c3c" },
         ]);
       }
-    }, 100); // update every 100ms
+    }, 100); // 100msごとに更新する
   };
 
-  // Format elapsed time as MM:SS
+  // 経過時間をMM:SS形式にフォーマットする
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  // Handle visibility change and race state
+  // 画面の表示状態とレースの状態を処理する
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        // Tab is hidden, clear the interval
+        // タブが非表示になったのでintervalをクリアする
         if (raceInterval.current) {
           clearInterval(raceInterval.current);
         }
       } else if (raceStarted && !raceFinished && startTime) {
-        // Tab is visible and race is in progress, restart the interval
+        // タブが表示され、レースが進行中ならintervalを再開する
         const currentTime = (Date.now() - startTime) / 1000;
         if (currentTime < RACE_DURATION) {
-          // Clear any existing interval
+          // 既存のintervalがあればクリアする
           if (raceInterval.current) {
             clearInterval(raceInterval.current);
           }
 
-          // Start new interval
+          // 新しいintervalを開始する
           raceInterval.current = setInterval(() => {
             const updatedTime = (Date.now() - startTime) / 1000;
             if (updatedTime >= RACE_DURATION) {
@@ -163,7 +163,7 @@ const RaceTrack: React.FC = () => {
             }
           }, 100);
         } else {
-          // Race has finished while tab was hidden
+          // タブが非表示の間にレースが終了していた
           setElapsedTime(RACE_DURATION);
           setCars([
             { id: 1, position: carSpeeds[0] * RACE_DURATION, lane: 0, color: "#2ecc71" },
@@ -174,7 +174,7 @@ const RaceTrack: React.FC = () => {
       }
     };
 
-    // Initial setup if race is already started
+    // レースがすでに開始されている場合の初期設定
     if (raceStarted && !raceFinished && startTime) {
       const currentTime = (Date.now() - startTime) / 1000;
       if (currentTime < RACE_DURATION) {

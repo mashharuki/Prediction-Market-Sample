@@ -6,7 +6,7 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract PredictionMarket is Ownable {
     /////////////////
-    /// Errors //////
+    /// エラー //////
     /////////////////
 
     error PredictionMarket__MustProvideETHForInitialLiquidity();
@@ -27,7 +27,7 @@ contract PredictionMarket is Ownable {
     error PredictionMarket__InvalidPercentageToLock();
 
     //////////////////////////
-    /// State Variables //////
+    /// 状態変数 //////
     //////////////////////////
 
     enum Outcome {
@@ -44,7 +44,7 @@ contract PredictionMarket is Ownable {
     /// Checkpoint 5 ///
 
     /////////////////////////
-    /// Events //////
+    /// イベント //////
     /////////////////////////
 
     event TokensPurchased(address indexed buyer, Outcome outcome, uint256 amount, uint256 ethAmount);
@@ -56,7 +56,7 @@ contract PredictionMarket is Ownable {
     event LiquidityRemoved(address indexed provider, uint256 ethAmount, uint256 tokensAmount);
 
     /////////////////
-    /// Modifiers ///
+    /// 修飾子 ///
     /////////////////
 
     /// Checkpoint 5 ///
@@ -66,7 +66,7 @@ contract PredictionMarket is Ownable {
     /// Checkpoint 8 ///
 
     //////////////////
-    ////Constructor///
+    ////コンストラクタ///
     //////////////////
 
     constructor(
@@ -82,100 +82,100 @@ contract PredictionMarket is Ownable {
     }
 
     /////////////////
-    /// Functions ///
+    /// 関数 ///
     /////////////////
 
     /**
-     * @notice Add liquidity to the prediction market and mint tokens
-     * @dev Only the owner can add liquidity and only if the prediction is not reported
+     * @notice 予測市場に流動性を追加し、トークンをミントする
+     * @dev オーナーのみが呼び出せ、かつ予測結果がまだ報告されていない場合のみ実行できる
      */
     function addLiquidity() external payable onlyOwner {
         //// Checkpoint 4 ////
     }
 
     /**
-     * @notice Remove liquidity from the prediction market and burn respective tokens, if you remove liquidity before prediction ends you got no share of lpReserve
-     * @dev Only the owner can remove liquidity and only if the prediction is not reported
-     * @param _ethToWithdraw Amount of ETH to withdraw from liquidity pool
+     * @notice 予測市場から流動性を引き出し、対応するトークンをバーンする。予測結果が確定する前に流動性を引き出した場合、lpReserveの取り分は得られない
+     * @dev オーナーのみが呼び出せ、かつ予測結果がまだ報告されていない場合のみ実行できる
+     * @param _ethToWithdraw 流動性プールから引き出すETHの量
      */
     function removeLiquidity(uint256 _ethToWithdraw) external onlyOwner {
         //// Checkpoint 4 ////
     }
 
     /**
-     * @notice Report the winning outcome for the prediction
-     * @dev Only the oracle can report the winning outcome and only if the prediction is not reported
-     * @param _winningOutcome The winning outcome (YES or NO)
+     * @notice 予測結果の勝敗をオラクルが報告する
+     * @dev オラクルのみが呼び出せ、かつ予測結果がまだ報告されていない場合のみ実行できる
+     * @param _winningOutcome 勝った結果(YESまたはNO)
      */
     function report(Outcome _winningOutcome) external {
         //// Checkpoint 5 ////
     }
 
     /**
-     * @notice Owner of contract can redeem winning tokens held by the contract after prediction is resolved and get ETH from the contract including LP revenue and collateral back
-     * @dev Only callable by the owner and only if the prediction is resolved
-     * @return ethRedeemed The amount of ETH redeemed
+     * @notice 予測結果が確定した後、コントラクトオーナーがコントラクトの保有する勝ちトークンを償還し、LPの取引収益と担保も含めてETHを引き出せる
+     * @dev オーナーのみが呼び出せ、かつ予測結果が確定している場合のみ実行できる
+     * @return ethRedeemed 償還されたETHの量
      */
     function resolveMarketAndWithdraw() external onlyOwner returns (uint256 ethRedeemed) {
         /// Checkpoint 6 ////
     }
 
     /**
-     * @notice Buy prediction outcome tokens with ETH, need to call priceInETH function first to get right amount of tokens to buy
-     * @param _outcome The possible outcome (YES or NO) to buy tokens for
-     * @param _amountTokenToBuy Amount of tokens to purchase
+     * @notice ETHで予測結果トークンを購入する。事前にpriceInETH関数を呼び出して正しい購入量を確認する必要がある
+     * @param _outcome 購入したい結果(YESまたはNO)
+     * @param _amountTokenToBuy 購入するトークンの量
      */
     function buyTokensWithETH(Outcome _outcome, uint256 _amountTokenToBuy) external payable {
         /// Checkpoint 8 ////
     }
 
     /**
-     * @notice Sell prediction outcome tokens for ETH, need to call priceInETH function first to get right amount of tokens to buy
-     * @param _outcome The possible outcome (YES or NO) to sell tokens for
-     * @param _tradingAmount The amount of tokens to sell
+     * @notice 予測結果トークンを売却してETHを受け取る。事前にpriceInETH関数を呼び出して正しい売却量を確認する必要がある
+     * @param _outcome 売却したい結果(YESまたはNO)
+     * @param _tradingAmount 売却するトークンの量
      */
     function sellTokensForEth(Outcome _outcome, uint256 _tradingAmount) external {
         /// Checkpoint 8 ////
     }
 
     /**
-     * @notice Redeem winning tokens for ETH after prediction is resolved, winning tokens are burned and user receives ETH
-     * @dev Only if the prediction is resolved
-     * @param _amount The amount of winning tokens to redeem
+     * @notice 予測結果が確定した後、勝ちトークンをETHと交換する。勝ちトークンはバーンされ、ユーザーはETHを受け取る
+     * @dev 予測結果が確定している場合のみ実行できる
+     * @param _amount 償還する勝ちトークンの量
      */
     function redeemWinningTokens(uint256 _amount) external {
         /// Checkpoint 9 ////
     }
 
     /**
-     * @notice Calculate the total ETH price for buying tokens
-     * @param _outcome The possible outcome (YES or NO) to buy tokens for
-     * @param _tradingAmount The amount of tokens to buy
-     * @return The total ETH price
+     * @notice トークン購入にかかる合計ETH価格を計算する
+     * @param _outcome 購入したい結果(YESまたはNO)
+     * @param _tradingAmount 購入するトークンの量
+     * @return 合計ETH価格
      */
     function getBuyPriceInEth(Outcome _outcome, uint256 _tradingAmount) public view returns (uint256) {
         /// Checkpoint 7 ////
     }
 
     /**
-     * @notice Calculate the total ETH price for selling tokens
-     * @param _outcome The possible outcome (YES or NO) to sell tokens for
-     * @param _tradingAmount The amount of tokens to sell
-     * @return The total ETH price
+     * @notice トークン売却で得られる合計ETH価格を計算する
+     * @param _outcome 売却したい結果(YESまたはNO)
+     * @param _tradingAmount 売却するトークンの量
+     * @return 合計ETH価格
      */
     function getSellPriceInEth(Outcome _outcome, uint256 _tradingAmount) public view returns (uint256) {
         /// Checkpoint 7 ////
     }
 
     /////////////////////////
-    /// Helper Functions ///
+    /// ヘルパー関数 ///
     ////////////////////////
 
     /**
-     * @dev Internal helper to calculate ETH price for both buying and selling
-     * @param _outcome The possible outcome (YES or NO)
-     * @param _tradingAmount The amount of tokens
-     * @param _isSelling Whether this is a sell calculation
+     * @dev 購入・売却の両方に使うETH価格を計算する内部ヘルパー
+     * @param _outcome 結果(YESまたはNO)
+     * @param _tradingAmount トークンの量
+     * @param _isSelling 売却時の計算かどうか
      */
     function _calculatePriceInEth(
         Outcome _outcome,
@@ -186,30 +186,30 @@ contract PredictionMarket is Ownable {
     }
 
     /**
-     * @dev Internal helper to get the current reserves of the tokens
-     * @param _outcome The possible outcome (YES or NO)
-     * @return The current reserves of the tokens
+     * @dev トークンの現在のリザーブ量を取得する内部ヘルパー
+     * @param _outcome 結果(YESまたはNO)
+     * @return トークンの現在のリザーブ量
      */
     function _getCurrentReserves(Outcome _outcome) private view returns (uint256, uint256) {
         /// Checkpoint 7 ////
     }
 
     /**
-     * @dev Internal helper to calculate the probability of the tokens
-     * @param tokensSold The number of tokens sold
-     * @param totalSold The total number of tokens sold
-     * @return The probability of the tokens
+     * @dev トークンの確率を計算する内部ヘルパー
+     * @param tokensSold 売却済みトークンの数
+     * @param totalSold 売却済みトークンの合計数
+     * @return トークンの確率
      */
     function _calculateProbability(uint256 tokensSold, uint256 totalSold) private pure returns (uint256) {
         /// Checkpoint 7 ////
     }
 
     /////////////////////////
-    /// Getter Functions ///
+    /// ゲッター関数 ///
     ////////////////////////
 
     /**
-     * @notice Get the prediction details
+     * @notice 予測市場の詳細情報を取得する
      */
     function getPrediction()
         external

@@ -39,11 +39,11 @@ export function ProbabilityDisplay({
 
     if (_token1Reserve === totalSupply && _token2Reserve === totalSupply) return 0.5;
 
-    // Calculate tokens sold for each option
+    // 各選択肢の売却済みトークンを計算する
     const token1Sold = totalSupply - _token1Reserve;
     const token2Sold = totalSupply - _token2Reserve;
 
-    // Calculate total tokens sold
+    // 売却済みトークンの合計を計算する
     const totalTokensSold = token1Sold + token2Sold;
 
     const probability = Number(token1Sold * BigInt(1e18)) / Number(totalTokensSold);
