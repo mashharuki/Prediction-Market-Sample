@@ -4,6 +4,11 @@ pragma solidity >=0.8.0 <0.9.0;
 import { PredictionMarketToken } from "./PredictionMarketToken.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
+/**
+ * @title 予測市場用のスマートコントラクト
+ * @author 
+ * @notice 
+ */
 contract PredictionMarket is Ownable {
     /////////////////
     /// エラー //////
@@ -37,7 +42,15 @@ contract PredictionMarket is Ownable {
 
     uint256 private constant PRECISION = 1e18;
 
-    /// Checkpoint 2 ///
+    // 変数群
+    address public immutable i_oracle;
+    uint256 public immutable i_initialTokenValue;
+    uint256 public immutable i_percentageLocked;
+    uint256 public immutable i_initialYesProbability;
+
+    string public s_question;
+    uint256 public s_ethCollateral;
+    uint256 public s_lpTradingRevenue;
 
     /// Checkpoint 3 ///
 
@@ -65,10 +78,15 @@ contract PredictionMarket is Ownable {
 
     /// Checkpoint 8 ///
 
-    //////////////////
-    ////コンストラクタ///
-    //////////////////
-
+    /**
+     * コンストラクター
+     * @param _liquidityProvider Ownableにそのまま渡されるオーナーアドレス
+     * @param _oracle 後で結果を報告することになるアドレス
+     * @param _question 実際に問われる予測の内容(例:「緑の車は勝つか?」)
+     * @param _initialTokenValue 勝ったトークンが支払うETH価値(例:0.01 ETH)
+     * @param _initialYesProbability 開始時点で「Yes」がどれくらい起こりそうか(例:50%なら50)
+     * @param _percentageToLock 確率・価格ロジックで使われる値(詳細はCheckpoint 3で掘り下げます)
+     */
     constructor(
         address _liquidityProvider,
         address _oracle,
@@ -77,7 +95,28 @@ contract PredictionMarket is Ownable {
         uint8 _initialYesProbability,
         uint8 _percentageToLock
     ) payable Ownable(_liquidityProvider) {
-        /// Checkpoint 2 ////
+        // 引数の値をチェック
+        if (msg.value == 0) {
+            revert PredictionMarket__MustProvideETHForInitialLiquidity();
+        }
+
+        if (_initialYesProbability >= 100 || _initialYesProbability == 0) {
+            revert PredictionMarket__InvalidProbability();
+        }
+
+        if (_percentageToLock >= 100 || _percentageToLock == 0) {
+            revert PredictionMarket__InvalidPercentageToLock();
+        }
+
+        // 初期値を更新
+        i_oracle = _oracle;
+        s_question = _question;
+        i_initialTokenValue = _initialTokenValue;
+        i_initialYesProbability = _initialYesProbability;
+        i_percentageLocked = _percentageToLock;
+
+        s_ethCollateral = msg.value;
+
         /// Checkpoint 3 ////
     }
 
@@ -209,7 +248,7 @@ contract PredictionMarket is Ownable {
     ////////////////////////
 
     /**
-     * @notice 予測市場の詳細情報を取得する
+     * @notice 予測市場の詳細情報を取得するメソッド
      */
     function getPrediction()
         external
