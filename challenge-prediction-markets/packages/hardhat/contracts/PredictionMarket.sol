@@ -52,7 +52,10 @@ contract PredictionMarket is Ownable {
     uint256 public s_ethCollateral;
     uint256 public s_lpTradingRevenue;
 
-    /// Checkpoint 3 ///
+    // Yes トークン
+    PredictionMarketToken public immutable i_yesToken;
+    // No トークン
+    PredictionMarketToken public immutable i_noToken;
 
     /// Checkpoint 5 ///
 
@@ -117,7 +120,24 @@ contract PredictionMarket is Ownable {
 
         s_ethCollateral = msg.value;
 
-        /// Checkpoint 3 ////
+        // トークン発行量を算出
+        uint256 initialTokenAmount = (msg.value * PRECISION) / _initialTokenValue;
+
+        i_yesToken = new PredictionMarketToken("Yes", "Y", msg.sender, initialTokenAmount);
+        i_noToken = new PredictionMarketToken("No", "N", msg.sender, initialTokenAmount);
+
+        // トークンロック初期値
+        uint256 initialYesAmountLocked = (initialTokenAmount * _initialYesProbability * _percentageToLock * 2) / 10000;
+        uint256 initialNoAmountLocked =
+            (initialTokenAmount * (100 - _initialYesProbability) * _percentageToLock * 2) / 10000;
+
+        // トークンロック量を市場作成者に送金
+        bool success1 = i_yesToken.transfer(msg.sender, initialYesAmountLocked);
+        bool success2 = i_noToken.transfer(msg.sender, initialNoAmountLocked);
+        
+        if (!success1 || !success2) {
+            revert PredictionMarket__TokenTransferFailed();
+        }
     }
 
     /////////////////
