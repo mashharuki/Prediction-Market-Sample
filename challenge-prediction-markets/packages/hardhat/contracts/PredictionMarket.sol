@@ -57,7 +57,8 @@ contract PredictionMarket is Ownable {
     // No トークン
     PredictionMarketToken public immutable i_noToken;
 
-    /// Checkpoint 5 ///
+    PredictionMarketToken public s_winningToken;
+    bool public s_isReported;
 
     /////////////////////////
     /// イベント //////
@@ -75,9 +76,19 @@ contract PredictionMarket is Ownable {
     /// 修飾子 ///
     /////////////////
 
-    /// Checkpoint 5 ///
+    modifier predictionNotReported() {
+        if (s_isReported) {
+            revert PredictionMarket__PredictionAlreadyReported();
+        }
+        _;
+    }
 
-    /// Checkpoint 6 ///
+    modifier predictionReported() {
+        if (!s_isReported) {
+            revert PredictionMarket__PredictionNotReported();
+        }
+        _;
+    }
 
     /// Checkpoint 8 ///
 
@@ -134,7 +145,7 @@ contract PredictionMarket is Ownable {
         // トークンロック量を市場作成者に送金
         bool success1 = i_yesToken.transfer(msg.sender, initialYesAmountLocked);
         bool success2 = i_noToken.transfer(msg.sender, initialNoAmountLocked);
-        
+
         if (!success1 || !success2) {
             revert PredictionMarket__TokenTransferFailed();
         }
@@ -148,8 +159,15 @@ contract PredictionMarket is Ownable {
      * @notice 予測市場に流動性を追加し、トークンをミントする
      * @dev オーナーのみが呼び出せ、かつ予測結果がまだ報告されていない場合のみ実行できる
      */
-    function addLiquidity() external payable onlyOwner {
-        //// Checkpoint 4 ////
+    function addLiquidity() external payable onlyOwner predictionNotReported {
+        s_ethCollateral += msg.value;
+
+        uint256 tokensAmount = (msg.value * PRECISION) / i_initialTokenValue;
+        // 流動性提供に応じてトークンをミント
+        i_yesToken.mint(address(this), tokensAmount);
+        i_noToken.mint(address(this), tokensAmount);
+
+        emit LiquidityAdded(msg.sender, msg.value, tokensAmount);
     }
 
     /**
@@ -157,8 +175,30 @@ contract PredictionMarket is Ownable {
      * @dev オーナーのみが呼び出せ、かつ予測結果がまだ報告されていない場合のみ実行できる
      * @param _ethToWithdraw 流動性プールから引き出すETHの量
      */
-    function removeLiquidity(uint256 _ethToWithdraw) external onlyOwner {
-        //// Checkpoint 4 ////
+    function removeLiquidity(uint256 _ethToWithdraw) external onlyOwner predictionNotReported {
+        // 焼却する
+        uint256 amountTokenToBurn = (_ethToWithdraw / i_initialTokenValue) * PRECISION;
+
+        if (amountTokenToBurn > (i_yesToken.balanceOf(address(this)))) {
+            revert PredictionMarket__InsufficientTokenReserve(Outcome.YES, amountTokenToBurn);
+        }
+
+        if (amountTokenToBurn > (i_noToken.balanceOf(address(this)))) {
+            revert PredictionMarket__InsufficientTokenReserve(Outcome.NO, amountTokenToBurn);
+        }
+
+        s_ethCollateral -= _ethToWithdraw;
+
+        // YesトークンとNoトークンを焼却する
+        i_yesToken.burn(address(this), amountTokenToBurn);
+        i_noToken.burn(address(this), amountTokenToBurn);
+
+        (bool success,) = msg.sender.call{value: _ethToWithdraw}("");
+        if (!success) {
+            revert PredictionMarket__ETHTransferFailed();
+        }
+
+        emit LiquidityRemoved(msg.sender, _ethToWithdraw, amountTokenToBurn);
     }
 
     /**
@@ -167,7 +207,15 @@ contract PredictionMarket is Ownable {
      * @param _winningOutcome 勝った結果(YESまたはNO)
      */
     function report(Outcome _winningOutcome) external {
-        //// Checkpoint 5 ////
+        if (msg.sender != i_oracle) {
+            revert PredictionMarket__OnlyOracleCanReport();
+        }
+        // 勝った方のトークンのアドレスを記録する
+        s_winningToken = _winningOutcome == Outcome.YES ? i_yesToken : i_noToken;
+        // フラグをオンにする
+        s_isReported = true;
+
+        emit MarketReported(msg.sender, _winningOutcome, address(s_winningToken));
     }
 
     /**
@@ -176,7 +224,37 @@ contract PredictionMarket is Ownable {
      * @return ethRedeemed 償還されたETHの量
      */
     function resolveMarketAndWithdraw() external onlyOwner returns (uint256 ethRedeemed) {
-        /// Checkpoint 6 ////
+        // コントラクトが保有しているトークンの残高を取得
+        uint256 contractWinningTokens = s_winningToken.balanceOf(address(this));
+        
+        if (contractWinningTokens > 0) {
+            // 引き出せる金額を設定
+            ethRedeemed = (contractWinningTokens * i_initialTokenValue) / PRECISION;
+
+            if (ethRedeemed > s_ethCollateral) {
+                ethRedeemed = s_ethCollateral;
+            }
+
+            s_ethCollateral -= ethRedeemed;
+        }
+        // 合計金額を計算する
+        uint256 totalEthToSend = ethRedeemed + s_lpTradingRevenue;
+
+        s_lpTradingRevenue = 0;
+
+        // 焼却する
+        s_winningToken.burn(address(this), contractWinningTokens);
+
+        // 引き出す
+        (bool success,) = msg.sender.call{value: totalEthToSend}("");
+        
+        if (!success) {
+            revert PredictionMarket__ETHTransferFailed();
+        }
+
+        emit MarketResolved(msg.sender, totalEthToSend);
+
+        return ethRedeemed;
     }
 
     /**
