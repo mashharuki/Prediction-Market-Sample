@@ -90,7 +90,20 @@ contract PredictionMarket is Ownable {
         _;
     }
 
-    /// Checkpoint 8 ///
+    modifier notOwner() {
+        if (msg.sender == owner()) {
+            revert PredictionMarket__OwnerCannotCall();
+        }
+        _;
+    }
+
+
+    modifier amountGreaterThanZero(uint256 _amount) {
+        if (_amount == 0) {
+            revert PredictionMarket__AmountMustBeGreaterThanZero();
+        }
+        _;
+    }
 
     /**
      * コンストラクター
@@ -247,7 +260,7 @@ contract PredictionMarket is Ownable {
 
         // 引き出す
         (bool success,) = msg.sender.call{value: totalEthToSend}("");
-        
+
         if (!success) {
             revert PredictionMarket__ETHTransferFailed();
         }
@@ -262,8 +275,36 @@ contract PredictionMarket is Ownable {
      * @param _outcome 購入したい結果(YESまたはNO)
      * @param _amountTokenToBuy 購入するトークンの量
      */
-    function buyTokensWithETH(Outcome _outcome, uint256 _amountTokenToBuy) external payable {
-        /// Checkpoint 8 ////
+    function buyTokensWithETH(Outcome _outcome, uint256 _amountTokenToBuy) 
+        external 
+        payable 
+        amountGreaterThanZero(_amountTokenToBuy)
+        predictionNotReported
+        notOwner
+    {
+        // 購入価格を算出する
+        uint256 ethNeeded = getBuyPriceInEth(_outcome, _amountTokenToBuy);
+
+        if (msg.value != ethNeeded) {
+            revert PredictionMarket__MustSendExactETHAmount();
+        }
+
+        // どちらのトークンを購入するか選択
+        PredictionMarketToken optionToken = _outcome == Outcome.YES ? i_yesToken : i_noToken;
+
+        if (_amountTokenToBuy > optionToken.balanceOf(address(this))) {
+            revert PredictionMarket__InsufficientTokenReserve(_outcome, _amountTokenToBuy);
+        }
+
+        s_lpTradingRevenue += msg.value;
+
+        // 呼び出し元にトークンを送金する
+        bool success = optionToken.transfer(msg.sender, _amountTokenToBuy);
+        if (!success) {
+            revert PredictionMarket__TokenTransferFailed();
+        }
+
+        emit TokensPurchased(msg.sender, _outcome, _amountTokenToBuy, msg.value);
     }
 
     /**
@@ -271,8 +312,44 @@ contract PredictionMarket is Ownable {
      * @param _outcome 売却したい結果(YESまたはNO)
      * @param _tradingAmount 売却するトークンの量
      */
-    function sellTokensForEth(Outcome _outcome, uint256 _tradingAmount) external {
-        /// Checkpoint 8 ////
+    function sellTokensForEth(Outcome _outcome, uint256 _tradingAmount) 
+        external
+        amountGreaterThanZero(_tradingAmount)
+        predictionNotReported
+        notOwner 
+    {
+        // 売却するトークンの情報を取得する
+        PredictionMarketToken optionToken = _outcome == Outcome.YES ? i_yesToken : i_noToken;
+        // 残高を取得する
+        uint256 userBalance = optionToken.balanceOf(msg.sender);
+
+        if (userBalance < _tradingAmount) {
+            revert PredictionMarket__InsufficientBalance(_tradingAmount, userBalance);
+        }
+
+        uint256 allowance = optionToken.allowance(msg.sender, address(this));
+        if (allowance < _tradingAmount) {
+            revert PredictionMarket__InsufficientAllowance(_tradingAmount, allowance);
+        }
+
+        // 受け取るETH
+        uint256 ethToReceive = getSellPriceInEth(_outcome, _tradingAmount);
+
+        s_lpTradingRevenue -= ethToReceive;
+
+        // ETHを送金
+        (bool sent,) = msg.sender.call{value: ethToReceive}("");
+        if (!sent) {
+            revert PredictionMarket__ETHTransferFailed();
+        }
+
+        // 予測市場用のトークンを送金
+        bool success = optionToken.transferFrom(msg.sender, address(this), _tradingAmount);
+        if (!success) {
+            revert PredictionMarket__TokenTransferFailed();
+        }
+
+        emit TokensSold(msg.sender, _outcome, _tradingAmount, ethToReceive);
     }
 
     /**
@@ -281,7 +358,26 @@ contract PredictionMarket is Ownable {
      * @param _amount 償還する勝ちトークンの量
      */
     function redeemWinningTokens(uint256 _amount) external {
-        /// Checkpoint 9 ////
+        if (s_winningToken.balanceOf(msg.sender) < _amount) {
+            revert PredictionMarket__InsufficientWinningTokens();
+        }
+
+        // 受け取るETHを算出する
+        uint256 ethToReceive = (_amount * i_initialTokenValue) / PRECISION;
+
+        s_ethCollateral -= ethToReceive;
+
+        // 焼却する
+        s_winningToken.burn(msg.sender, _amount);
+
+        // ETHを受け取る
+        (bool success,) = msg.sender.call{value: ethToReceive}("");
+
+        if (!success) {
+            revert PredictionMarket__ETHTransferFailed();
+        }
+
+        emit WinningTokensRedeemed(msg.sender, _amount, ethToReceive);
     }
 
     /**
@@ -291,7 +387,7 @@ contract PredictionMarket is Ownable {
      * @return 合計ETH価格
      */
     function getBuyPriceInEth(Outcome _outcome, uint256 _tradingAmount) public view returns (uint256) {
-        /// Checkpoint 7 ////
+        return _calculatePriceInEth(_outcome, _tradingAmount, false);
     }
 
     /**
@@ -301,7 +397,7 @@ contract PredictionMarket is Ownable {
      * @return 合計ETH価格
      */
     function getSellPriceInEth(Outcome _outcome, uint256 _tradingAmount) public view returns (uint256) {
-        /// Checkpoint 7 ////
+        return _calculatePriceInEth(_outcome, _tradingAmount, true);
     }
 
     /////////////////////////
@@ -319,7 +415,37 @@ contract PredictionMarket is Ownable {
         uint256 _tradingAmount,
         bool _isSelling
     ) private view returns (uint256) {
-        /// Checkpoint 7 ////
+        (uint256 currentTokenReserve, uint256 currentOtherTokenReserve) = _getCurrentReserves(_outcome);
+
+        /// Ensure sufficient liquidity when buying
+        if (!_isSelling) {
+            if (currentTokenReserve < _tradingAmount) {
+                revert PredictionMarket__InsufficientLiquidity();
+            }
+        }
+
+        uint256 totalTokenSupply = i_yesToken.totalSupply();
+
+        /// Before trade
+        uint256 currentTokenSoldBefore = totalTokenSupply - currentTokenReserve;
+        uint256 currentOtherTokenSold = totalTokenSupply - currentOtherTokenReserve;
+
+        uint256 totalTokensSoldBefore = currentTokenSoldBefore + currentOtherTokenSold;
+        uint256 probabilityBefore = _calculateProbability(currentTokenSoldBefore, totalTokensSoldBefore);
+
+        /// After trade
+        uint256 currentTokenReserveAfter =
+            _isSelling ? currentTokenReserve + _tradingAmount : currentTokenReserve - _tradingAmount;
+        uint256 currentTokenSoldAfter = totalTokenSupply - currentTokenReserveAfter;
+
+        uint256 totalTokensSoldAfter =
+            _isSelling ? totalTokensSoldBefore - _tradingAmount : totalTokensSoldBefore + _tradingAmount;
+
+        uint256 probabilityAfter = _calculateProbability(currentTokenSoldAfter, totalTokensSoldAfter);
+
+        /// Compute final price
+        uint256 probabilityAvg = (probabilityBefore + probabilityAfter) / 2;
+        return (i_initialTokenValue * probabilityAvg * _tradingAmount) / (PRECISION * PRECISION);
     }
 
     /**
@@ -328,7 +454,11 @@ contract PredictionMarket is Ownable {
      * @return トークンの現在のリザーブ量
      */
     function _getCurrentReserves(Outcome _outcome) private view returns (uint256, uint256) {
-        /// Checkpoint 7 ////
+        if (_outcome == Outcome.YES) {
+            return (i_yesToken.balanceOf(address(this)), i_noToken.balanceOf(address(this)));
+        } else {
+            return (i_noToken.balanceOf(address(this)), i_yesToken.balanceOf(address(this)));
+        }
     }
 
     /**
@@ -338,7 +468,7 @@ contract PredictionMarket is Ownable {
      * @return トークンの確率
      */
     function _calculateProbability(uint256 tokensSold, uint256 totalSold) private pure returns (uint256) {
-        /// Checkpoint 7 ////
+        return (tokensSold * PRECISION) / totalSold;
     }
 
     /////////////////////////
@@ -370,23 +500,21 @@ contract PredictionMarket is Ownable {
             uint256 percentageLocked
         )
     {
-        /// Checkpoint 3 ////
-        // oracle = i_oracle;
-        // initialTokenValue = i_initialTokenValue;
-        // percentageLocked = i_percentageLocked;
-        // initialProbability = i_initialYesProbability;
-        // question = s_question;
-        // ethCollateral = s_ethCollateral;
-        // lpTradingRevenue = s_lpTradingRevenue;
-        // predictionMarketOwner = owner();
-        // yesToken = address(i_yesToken);
-        // noToken = address(i_noToken);
-        // outcome1 = i_yesToken.name();
-        // outcome2 = i_noToken.name();
-        // yesTokenReserve = i_yesToken.balanceOf(address(this));
-        // noTokenReserve = i_noToken.balanceOf(address(this));
-        /// Checkpoint 5 ////
-        // isReported = s_isReported;
-        // winningToken = address(s_winningToken);
+        oracle = i_oracle;
+        initialTokenValue = i_initialTokenValue;
+        percentageLocked = i_percentageLocked;
+        initialProbability = i_initialYesProbability;
+        question = s_question;
+        ethCollateral = s_ethCollateral;
+        lpTradingRevenue = s_lpTradingRevenue;
+        predictionMarketOwner = owner();
+        yesToken = address(i_yesToken);
+        noToken = address(i_noToken);
+        outcome1 = i_yesToken.name();
+        outcome2 = i_noToken.name();
+        yesTokenReserve = i_yesToken.balanceOf(address(this));
+        noTokenReserve = i_noToken.balanceOf(address(this));
+        isReported = s_isReported;
+        winningToken = address(s_winningToken);
     }
 }
